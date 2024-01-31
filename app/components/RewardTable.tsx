@@ -1,67 +1,34 @@
 import { createColumnHelper, getCoreRowModel, getPaginationRowModel, useReactTable , flexRender } from "@tanstack/react-table";
 import PaginationNavigator from "./PaginationNavigator";
 import { classNames } from "~/tailwind"
-import Search from "./Search";
-import { Trades, TradesWithItemNo, TradeResponse } from "~/models/trade.server";
-import CustomDropdownStatus from "./CustomDropdownStatus";
-import DetailButton from "./DetailButton";
 import { useState } from "react";
+import CustomDropdownReward from "./CustomDropdownReward";
+import { RewardDetail } from "~/models/reward.server";
 
-import Datepicker from "react-tailwindcss-datepicker"; 
-import { Prettify } from "~/utils.type";
 
-
-const columnHelper = createColumnHelper<TradeTableData["data"][number]>();
+const columnHelper = createColumnHelper<RewardDetail>();
 
 // แก้ enum status ตรงนี้
 const options = [{
-  title : 'ตรวจสอบแล้ว',
-  shipmentStatus : 'approved',
+  title : 'เผยแพร่',
+  shareStatus : true,
   color : '#1AA127'
 },
 {
-  title : 'รอดำเนินการ',
-  shipmentStatus : 'pending',
+  title : 'ไม่เผยแพร่',
+  shareStatus : false,
   color : '#414141'
-},
-{
-  title : 'จัดส่งสำเร็จ',
-  shipmentStatus : 'successfully',
-  color : '#1AA127'
-  
-},
-{
-  title : 'ยกเลิกจัดส่ง',
-  shipmentStatus : 'shipping_cancel',
-  color : '#EA5050'
-  
-},
-{
-  title : 'ยกเลิกสิทธิ์',
-  shipmentStatus : 'approve_cancel',
-  color : '#EA5050'
-},
+}
 ]
+
 
 const columns = [
   columnHelper.accessor("itemNo", {
     header: () => "No.",
     cell: (info) => info.getValue()
   }),
-  columnHelper.accessor("trade_id", {
-    header: () => "หมายเลขการแลกซื้อ",
-    cell: (info) => <p className="text-[#0047FF]">{ info.getValue() }</p>
-  }),
-  columnHelper.accessor("created_at", {
-    header: () => "วันที่แลกซื้อ",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("customer.name", {
-    header: () => "ชื่อผู้ใช้",
-    cell: (info) => info.getValue()
-  }),
-  columnHelper.accessor((row) => ({ name: row.merchandise.title1, image: row.merchandise.picture }), {
-    id: "merchandise_info",
+  columnHelper.accessor((row) => ({ name: row.productName, image: row.productImage }), {
+    id: "product_info",
     header: () => "ชื่อสินค้า",
     cell: (info) => <div className="flex gap-1 items-center">
                       { info.getValue().name ? ( 
@@ -73,34 +40,46 @@ const columns = [
                       <span>{info.getValue().name}</span>
                     </div>
   }),
-  columnHelper.accessor("merchandise.point", {
+  columnHelper.accessor("productDetail", {
+    header: () => "รายละเอียดสินค้า",
+    cell: (info) => <p className="text-[#0047FF]">{ info.getValue() }</p>
+  }),
+  columnHelper.accessor("priceThb", {
+    header: () => "ราคา (บาท)",
+    cell: (info) => info.getValue().toFixed(2),
+  }),
+  columnHelper.accessor("pricePoint", {
     header: () => "จำนวน Point ที่ใช้แลก",
     cell: (info) => info.getValue()
   }),
-  columnHelper.accessor("approve_status", {
-    header: () => "ตรวจสอบ",
-    cell: (info) => <CustomDropdownStatus options={options} defaultOption={info.getValue()} ></CustomDropdownStatus>
+  columnHelper.accessor("remaining", {
+    header: () => "คงเหลือ",
+    cell: (info) => info.getValue()
   }),
-  columnHelper.accessor("shipment_status", {
-    header: () => "การจัดสั่ง",
-    cell: (info) => <CustomDropdownStatus options={options} defaultOption={info.getValue()} ></CustomDropdownStatus>
+
+  columnHelper.accessor("shareStatus", {
+    header: () => "สถานะการเผยแพร่",
+    cell: (info) => <CustomDropdownReward options={options} defaultOption={info.getValue()} ></CustomDropdownReward>
   }),
-  columnHelper.accessor("trade_id", {
-    id: "trade_detail",
-    header: "รายละเอียด",
-    cell: (info) => <DetailButton to={`/trades/${info.getValue()}/detail`}/>
+  columnHelper.accessor("rewardId", {
+    header: () => "จัดการ",
+    cell: (info) => <div className="flex space-x-1">
+          <div className="cursor-pointer">
+            <img src="/images/pencil-alt.svg" alt="More options"  draggable="false" />
+          </div>
+          <div className="cursor-pointer"> 
+            <img src="/images/trash.svg" alt="More options"  draggable="false" />
+          </div>
+    </div>
   })
+
 ];
 
-export type TradeTableData = Prettify<Omit<TradeResponse, "data"> & { data: Omit<TradesWithItemNo, "order" | "trade">[] }>;
-
-interface TradeTableProps {
-  data : TradeTableData , 
-  filter : string ,
-  setFilter : React.Dispatch<React.SetStateAction<string>>
+interface RewardTableProps {
+  data : any 
 }
 
-function TradeTable ({ data , filter , setFilter } : TradeTableProps ): JSX.Element {
+function RewardTable ({ data } : RewardTableProps ): JSX.Element {
   const table = useReactTable({
     data: data.data,
     columns,
@@ -108,19 +87,8 @@ function TradeTable ({ data , filter , setFilter } : TradeTableProps ): JSX.Elem
     getPaginationRowModel: getPaginationRowModel()
   });
 
-  let today = new Date();
-  let sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
+  console.log(data.data)
 
-  const [value, setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
-  
-  function handleValueChange(newValue : any){
-    console.log('handleValueChange' , newValue)
-      setValue(newValue); 
-  } 
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -130,12 +98,7 @@ function TradeTable ({ data , filter , setFilter } : TradeTableProps ): JSX.Elem
     <div className="flex justify-between items-end mb-2">
       <p>ทั้งหมด {data.totalRow}</p>
       <div className="flex flex-row gap-x-3">
-      <Datepicker 
-        primaryColor={"blue"}
-        value={value} 
-        onChange={handleValueChange} 
-        /> 
-        <Search filter={filter} setFilter={setFilter} />
+        <button className="bg-[#28B7E1] h-[40px] w-[170px] border-none rounded-md text-white">Create</button>
       </div>
     </div>
 
@@ -196,4 +159,4 @@ function TradeTable ({ data , filter , setFilter } : TradeTableProps ): JSX.Elem
   )
 }
 
-export default TradeTable;
+export default RewardTable;

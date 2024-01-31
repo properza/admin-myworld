@@ -1,97 +1,33 @@
 import { MetaFunction , json } from "@remix-run/node";
-import { useLocation, useSearchParams } from "@remix-run/react";
+import { useLocation, useSearchParams ,useLoaderData } from "@remix-run/react";
 import { request } from "http";
 import { useEffect, useMemo, useState } from "react";
-import { LoaderFunctionArgs, useLoaderData } from "react-router";
+import { LoaderFunctionArgs } from "react-router";
 
 import Layout from "~/components/Layout";
 import TradeTable from "~/components/TradeTable";
-import {TradeDetail, TradeMetadata } from "~/models/trade.server";
+import {getTrades, Trades, TradesWithItemNo, TradeMetadata } from "~/models/trade.server";
+import { getUserData, requireUserId } from "~/services/session.server";
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 
-let mockupTrades = {
-  data : [
-    {
-      itemNo: 1,
-      tradeId: "111111",
-      customerName: "John Doe", 
-      customerPoint: 100,
-      merchandiseName: "Product A", 
-      merchandiseImageUrl: "https://picsum.photos/200/300", 
-      totalPrice: 10,
-      totalPointUsed: 10,
-      remainingPointAfterTrade: 2,
-      shipmentStatus: "pending",
-      tradedAt: "12/04/2023",
-      tradeStatus: "pending"
-    },
-    {
-      itemNo: 2,
-      tradeId: "22222",
-      customerName: "John Doe", 
-      customerPoint: 100,
-      merchandiseName: "Product A", 
-      merchandiseImageUrl: "https://picsum.photos/200/300", 
-      totalPrice: 10,
-      totalPointUsed: 10,
-      remainingPointAfterTrade: 2,
-      shipmentStatus: "shipping_cancel",
-      tradedAt: "01/05/2023",
-      tradeStatus: "approve_cancel"
-    },
-    {
-      itemNo: 3,
-      tradeId: "33333",
-      customerName: "John Doe", 
-      customerPoint: 100,
-      merchandiseName: "Product A", 
-      merchandiseImageUrl: "https://picsum.photos/200/300", 
-      totalPrice: 10,
-      totalPointUsed: 10,
-      remainingPointAfterTrade: 2,
-      shipmentStatus: "successfully",
-      tradedAt: "12/02/2023",
-      tradeStatus: "approved"
-    }
-  ],
-  currentPage: 1, 
-  perPage: 10, 
-  totalPage: 5, 
-  totalRow: 5
-
-};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await requireUserId(request);
+
+  const { accessToken } = await getUserData(request);
   const { searchParams } = new URL(request.url);
+
   const filter = searchParams.get("filter");
 
-  // เพิ่ม api เรียกข้อมูลในส่วนนี้ comment filter logic ออกใช้การ filter จากฝั่ง api แทน
-  //comment
-  let TradesInfo = { ...mockupTrades };
+  const trades = await getTrades(accessToken, { search: filter, perPage: 10 });
 
-  if (filter) {
-    TradesInfo.data = mockupTrades.data.filter((trade) => {
-      const lowerCaseSearchTerm = filter.toLowerCase();
-      return (
-        trade.tradeId.toLowerCase().includes(lowerCaseSearchTerm) ||
-        trade.customerName.toLowerCase().includes(lowerCaseSearchTerm) ||
-        trade.merchandiseName.toLowerCase().includes(lowerCaseSearchTerm)
-      );
-    });
-  }
-  //comment
-
-  // Wrap TradesInfo.data in an object with a key 'data' and use json function
-  return json({ TradesInfo });
+  return json({ trades });
 };
 
-
-
 export default function Redeem (): JSX.Element {
-
-  const { TradesInfo } = useLoaderData() as { TradesInfo: any };
-  const [tradeData, setTradeData] = useState<TradeDetail[]>([]);
+  const { trades } = useLoaderData<typeof loader>();
+  const [tradeData, setTradeData] = useState<TradesWithItemNo[]>([]);
   const [tradeMetadata, setTradeMetadata] = useState<TradeMetadata>({ currentPage: 0, perPage: 0, totalPage: 0, totalRow: 0 });
   const [filterQuery, setFilterQuery] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -99,21 +35,26 @@ export default function Redeem (): JSX.Element {
 
 
   useMemo(() => {
-    if (TradesInfo && TradesInfo.data) {
+    if (trades && trades.data) {
       setTradeMetadata({
-        currentPage: TradesInfo.currentPage,
-        totalPage: TradesInfo.totalPage,
-        totalRow: TradesInfo.totalRow,
-        perPage: TradesInfo.perPage
+        currentPage: trades.currentPage,
+        totalPage: trades.totalPage,
+        totalRow: trades.totalRow,
+        perPage: trades.perPage
       });
 
-      const tradeDataToSet: TradeDetail[] = TradesInfo.data || [];
-      setTradeData(tradeDataToSet);
+      const data: TradesWithItemNo[] = trades.data.map(( trade, index) => ({
+        ...trade,
+        itemNo: (trades.currentPage - 1) * trades.perPage + index + 1
+      }));
+
+      setTradeData(data);
+
     } else {
       setTradeMetadata({ currentPage: 0, totalPage: 0, totalRow: 0, perPage: 0 });
       setTradeData([]);
     }
-  }, [TradesInfo]);
+  }, [trades]);
 
   useEffect(() => {
     setSearchParams((prev) => {

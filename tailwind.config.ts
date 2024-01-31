@@ -1,7 +1,10 @@
 import type { Config } from "tailwindcss";
 
-export default {
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
+const config: Config = {
+  content: [
+    "./app/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js"
+  ],
   theme: {
     extend: {
       spacing: {
@@ -19,4 +22,7 @@ export default {
     },
   },
   plugins: [],
-} satisfies Config;
+  
+};
+
+export default config;

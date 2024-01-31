@@ -18,7 +18,7 @@ const TabsComponent: React.FC<TabsProps> = ({ tabs }) => {
 
   return (
     <div className="flex flex-col">
-        <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+        <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
             <ul className="flex flex-wrap -mb-px">
                 {tabs.map((tab, index) => (
                   <li key={index} className="me-2">
@@ -39,7 +39,7 @@ const TabsComponent: React.FC<TabsProps> = ({ tabs }) => {
               key={index}
               className={`${
                 index === currentTabs ? '' : 'hidden'
-              } px-2 py-4 rounded-lg bg-gray-50 dark:bg-gray-800`}
+              } px-2 py-4 rounded-lg bg-gray-50`}
               role="tabpanel"
               aria-labelledby={`${tab.label}-tab`}
             >

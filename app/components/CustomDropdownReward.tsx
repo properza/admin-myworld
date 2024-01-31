@@ -1,29 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-interface CustomDropdownStatusProps {
+interface CustomDropdownRewardProps {
   options: optionsDropdown[];
-  defaultOption: string;
+  defaultOption: boolean;
 }
 
 interface optionsDropdown {
   title  : string,
-  shipmentStatus: string,
+  shareStatus: boolean,
   color?: string;
 }
 
-function getDefaultOptions(  options : optionsDropdown[] ,status : string){
-  return options.find((item : optionsDropdown ) => item.shipmentStatus === status)
+function getDefaultOptions(  options : optionsDropdown[] ,status : boolean){
+  return options.find((item : optionsDropdown ) => item.shareStatus === status)
 }
 
-const CustomDropdownStatus: React.FC<CustomDropdownStatusProps> = ({ options, defaultOption }) => {
+const CustomDropdownReward: React.FC<CustomDropdownRewardProps> = ({ options, defaultOption }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(getDefaultOptions( options, defaultOption) || options[0]);
   // const dropdownRef = useRef(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
 
-  const handleSelect = (option: string) => {
-    let selected = options.find((item: optionsDropdown ) => item.shipmentStatus === option);
+  const handleSelect = (option: boolean) => {
+    let selected = options.find((item: optionsDropdown ) => item.shareStatus === option);
     setSelectedOption(selected || ({} as optionsDropdown));
 
     console.log(selected)
@@ -58,7 +58,7 @@ const CustomDropdownStatus: React.FC<CustomDropdownStatusProps> = ({ options, de
       {isOpen && (
           <div className="absolute bg-[#fff] border-1 top-[32px] text-center left-[0] w-full rounded-lg overflow-hidden shadow-lg z-10">
             {options.map((option, index) => (
-              <div className="p-1 border-b-[1px] hover:bg-gray-100" key={index} onClick={() => handleSelect(option.shipmentStatus)} style={{borderColor :  option.color , color :   option.color }}>
+              <div className="p-1 border-b-[1px] hover:bg-gray-100" key={index} onClick={() => handleSelect(option.shareStatus)} style={{borderColor :  option.color , color :   option.color }}>
                 {option.title} 
               </div>
             ))}
@@ -69,4 +69,4 @@ const CustomDropdownStatus: React.FC<CustomDropdownStatusProps> = ({ options, de
   );
 };
 
-export default CustomDropdownStatus;
+export default CustomDropdownReward;
