@@ -1,4 +1,9 @@
-import { MetaFunction , json, redirect, LoaderFunctionArgs } from "@remix-run/node";
+import {
+	MetaFunction,
+	json,
+	redirect,
+	LoaderFunctionArgs,
+} from "@remix-run/node";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import invariant from "tiny-invariant";
@@ -10,9 +15,7 @@ import { Customer } from "~/models/customer.server";
 import { getTradesDetail, TradesDetail } from "~/models/trade.server";
 import { getUserData, requireUserId } from "~/services/session.server";
 
-
 export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
-
 
 // const mockCustomer: Customer = {
 //   customer_id: "123",
@@ -36,7 +39,7 @@ export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 // const mockTradeList = [
 //   {
 //     itemNo: 1,
-//     merchandiseName: "Product A", 
+//     merchandiseName: "Product A",
 //     merchandiseImageUrl: "https://picsum.photos/200/300",
 //     amount: 10,
 //     tradeStatus: "pending",
@@ -45,7 +48,7 @@ export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 //   },
 //   {
 //     itemNo: 2,
-//     merchandiseName: "Product A", 
+//     merchandiseName: "Product A",
 //     merchandiseImageUrl: "https://picsum.photos/200/300",
 //     amount: 10,
 //     tradeStatus: "pending",
@@ -55,50 +58,57 @@ export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 // ]
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  await requireUserId(request);
-  const { accessToken } = await getUserData(request);
-  
-  invariant(params.tradesId, "tradeId is required");
-  const pathname = new URL(request.url).pathname;
-  
-  if (!pathname.endsWith("detail")) {
-    return redirect(`/trades`);
-  }
+	await requireUserId(request);
+	const { accessToken } = await getUserData(request);
+	invariant(params.tradesId, "tradeId is required");
+	const pathname = new URL(request.url).pathname;
 
-  const tradesDetail = await getTradesDetail(accessToken, params.tradesId);
-  return json({ tradesDetail });
-}
+	if (!pathname.endsWith("detail")) {
+		return redirect(`/trades`);
+	}
 
-export default function Redeem (): JSX.Element {
-  const location = useLocation();
-  const { tradesDetail } = useLoaderData<typeof loader>();
+	const tradesDetail = await getTradesDetail(accessToken, params.tradesId);
+	return json({ tradesDetail });
+};
 
-  const [tradeDetailData, setTradeDetailData] = useState<TradesDetail>();
+export default function Redeem(): JSX.Element {
+	const location = useLocation();
+	const { tradesDetail } = useLoaderData<typeof loader>();
 
-  useEffect(() => {
-    // Update trade detail data when tradesDetail changes
-    if (tradesDetail && tradesDetail.data) {
-      // Assuming tradesDetail.data is of type TradesDetail
-      setTradeDetailData(tradesDetail.data as TradesDetail);
-    } else {
-      setTradeDetailData(undefined); // Reset tradeDetailData if tradesDetail or tradesDetail.data is not present
-    }
-  }, [tradesDetail]);
+	const [tradeDetailData, setTradeDetailData] = useState<TradesDetail>();
 
+	useEffect(() => {
+		console.log(tradeDetailData);
+		// Update trade detail data when tradesDetail changes
+		if (tradesDetail) {
+			// Assuming tradesDetail.data is of type TradesDetail
+			setTradeDetailData(tradesDetail as TradesDetail);
+		} else {
+			setTradeDetailData(undefined); // Reset tradeDetailData if tradesDetail or tradesDetail.data is not present
+		}
+	}, [tradesDetail]);
 
-  return (
-    <Layout title="รายละเอียดการแลกซื้อ" isSubRoute={false} returnRoute="" pathname={location.pathname}>
-      <div className="space-y-4">
-        {/* Render components conditionally */}
-        {tradeDetailData ? (
-          <>
-            <CustomerTradeDetailsCard tradeDetail={tradeDetailData} showShippingIinfo={true} />
-            <CustomTradesDetailsTable TradeDetail={tradeDetailData} />
-          </>
-        ) : (
-          <div>Loading...</div> // You can render a loading indicator here if needed
-        )}
-      </div>
-    </Layout>
-  );
+	return (
+		<Layout
+			title="รายละเอียดการแลกซื้อ"
+			isSubRoute={false}
+			returnRoute=""
+			pathname={location.pathname}
+		>
+			<div className="space-y-4">
+				{/* Render components conditionally */}
+				{tradeDetailData ? (
+					<>
+						<CustomerTradeDetailsCard
+							tradeDetail={tradeDetailData}
+							showShippingIinfo={true}
+						/>
+						<CustomTradesDetailsTable TradeDetail={tradeDetailData} />
+					</>
+				) : (
+					<div>Loading...</div> // You can render a loading indicator here if needed
+				)}
+			</div>
+		</Layout>
+	);
 }
