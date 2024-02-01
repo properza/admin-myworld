@@ -207,7 +207,7 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
 			}),
 			columnHelper.accessor("created_at", {
 				header: () => "วันที่แลกซื้อ",
-				cell: (info) => info.getValue(),
+				cell: (info) => <span className="text-nowrap">{info.getValue()}</span>,
 			}),
 			columnHelper.accessor("customer.name", {
 				header: () => "ชื่อผู้ใช้",

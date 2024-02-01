@@ -229,7 +229,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 	return (
 		<div className="w-full h-full flex flex-col">
 			{/* header */}
-			<div className="flex justify-between items-end mb-2">
+			<div className="flex justify-between  items-end mb-2">
 				<p>ทั้งหมด {data.totalRow}</p>
 				<div className="flex flex-row gap-x-3">
 					<button
@@ -330,14 +330,14 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 			</div>
 
 			{isOpen && (
-				<div className="fixed inset-0 flex items-center justify-center z-50">
+				<div className="fixed inset-0 flex py-6 justify-center z-50">
 					{/* Modal overlay */}
 					{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 					<div
 						className="fixed inset-0 bg-gray-900 opacity-30"
 						onClick={() => setisOpen(false)}
 					/>
-					<div className="bg-white rounded-lg p-8 z-50 max-w-lg w-full">
+					<div className="bg-white rounded-lg p-6 z-50 max-w-lg w-full overflow-auto">
 						{/* Modal content */}
 						<h2 className="text-2xl font-bold mb-4">
 							{formMethod === "create" ? "Create" : "Edit"}
@@ -369,38 +369,36 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 									}));
 								}}
 							/>
-							<div className="flex flex-col mb-4 gap-2 items-center">
+							<div className="flex mb-2 gap-2 items-center">
 								<label
 									htmlFor="uploadimg"
-									className="cursor-pointer w-32 aspect-square"
+									className="cursor-pointer w-32 flex items-center h-full"
 								>
 									{formValues.picture ? (
 										<img
 											src={formValues.picture}
-											className="w-32 h-32 aspect-square rounded object-cover"
+											className="w-full aspect-square rounded object-cover"
 											alt="product"
 										/>
 									) : (
-										<div className="w-32 h-32 aspect-square bg-gray-100 rounded items-center justify-center flex">
+										<div className="w-full aspect-square bg-gray-100 rounded items-center justify-center flex">
 											Upload
 										</div>
 									)}
 								</label>
-								<small>
-									Image should be at least 300 x 300 px in PNG or JPG.
-								</small>
 							</div>
-							<div>
-								<div className="mb-4 w-full">
-									<label>Product Name</label>
-									<input
-										type="text"
-										className=" block w-full px-4 py-2 rounded border-2"
-										name="name"
-										onChange={updateFormValues}
-										value={formValues.name}
-									/>
-								</div>
+							<small>
+								Image should be at least 300 x 300 px in PNG or JPG.
+							</small>
+							<div className="mb-4 w-full">
+								<label>Product Name</label>
+								<input
+									type="text"
+									className=" block w-full px-4 py-2 rounded border-2"
+									name="name"
+									onChange={updateFormValues}
+									value={formValues.name}
+								/>
 							</div>
 							<div className="mb-4">
 								<label>Title 1</label>
@@ -466,7 +464,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 								</div>
 							</div>
 							<div className="grid grid-cols-2 gap-4">
-								<div className="mb-4">
+								<div>
 									<label>Amount (Piece)</label>
 									<input
 										type="number"
@@ -476,7 +474,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 										value={formValues.piece}
 									/>
 								</div>
-								<div className="mb-4">
+								<div>
 									<label>Trading Point</label>
 									<input
 										type="number"

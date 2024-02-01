@@ -10,7 +10,9 @@ function DetailButton({ to }: DetailButtonProps): JSX.Element {
 			to={to}
 			className="h-6 px-1.5 py-0.5 bg-white rounded border border-sky-400 justify-start items-center gap-1 inline-flex"
 		>
-			<p className="text-sky-400 text-xs font-normal font-roboto">ดูรายละเอียด</p>
+			<p className="text-sky-400 text-xs font-normal font-roboto text-nowarp">
+				ดูรายละเอียด
+			</p>
 		</Link>
 	);
 }
