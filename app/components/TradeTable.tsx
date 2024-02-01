@@ -104,7 +104,6 @@ const EditAprroveStatus: FC<{
 			ref={formRef}
 		>
 			<input name="id" value={id} hidden />
-			<input name="shipment_status" value={shipment_status} hidden />
 			<select
 				name="approve_status"
 				defaultValue={info}
@@ -158,7 +157,6 @@ const EditShipmentStatus: FC<{
 			ref={formRef}
 		>
 			<input name="id" value={id} hidden />
-			<input name="approve_status" value={approve_status} hidden />
 			<select
 				name="shipment_status"
 				defaultValue={info}
@@ -168,7 +166,7 @@ const EditShipmentStatus: FC<{
 				}}
 				className="border-2 rounded p-1 text-xs"
 				style={{
-					borderColor: shipmeentOptions.find((v) => v.shipmentStatus == info)
+					borderColor: shipmeentOptions.find((v) => v.shipmentStatus === info)
 						?.color,
 				}}
 			>
