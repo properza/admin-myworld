@@ -137,15 +137,15 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 			}),
 			columnHelper.accessor("piece", {
 				header: () => "จำนวนชิ้น",
-				cell: (info) => info.getValue(),
+				cell: (info) => <p className="text-right w-full">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("point", {
 				header: () => "จำนวน Point ที่ใช้แลก",
-				cell: (info) => info.getValue(),
+				cell: (info) => <p className="text-right">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("remaining", {
 				header: () => "คงเหลือ",
-				cell: (info) => info.getValue(),
+				cell: (info) => <p className="text-right">{info.getValue()}</p>,
 			}),
 
 			columnHelper.accessor("is_publish", {
@@ -298,7 +298,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 									<td
 										key={cell.id}
 										className={classNames(
-											"flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
+											"flex-grow flex-shrink-0 h-[2.8rem] px-2.5 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
 										)}
 									>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
