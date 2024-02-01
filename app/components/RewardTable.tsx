@@ -136,15 +136,15 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 				cell: (info) => <p className="text-[#0047FF]">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("piece", {
-				header: () => "จำนวนชิ้น",
+				header: () => <p className="text-right">จำนวนชิ้น</p>,
 				cell: (info) => <p className="text-right w-full">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("point", {
-				header: () => "จำนวน Point ที่ใช้แลก",
+				header: () => <p className="text-right">จำนวน Point ที่ใช้แลก</p>,
 				cell: (info) => <p className="text-right">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("remaining", {
-				header: () => "คงเหลือ",
+				header: () => <p className="text-right">คงเหลือ</p>,
 				cell: (info) => <p className="text-right">{info.getValue()}</p>,
 			}),
 
