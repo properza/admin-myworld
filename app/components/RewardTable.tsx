@@ -94,7 +94,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 		original_picture: "",
 		description: "",
 
-		price: 0,
+		piece: 0,
 		point: 0,
 		redeem_per_customer: 0,
 		start_date: new Date(),
@@ -135,8 +135,8 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 				header: () => "รายละเอียดสินค้า",
 				cell: (info) => <p className="text-[#0047FF]">{info.getValue()}</p>,
 			}),
-			columnHelper.accessor("price", {
-				header: () => "ราคา (บาท)",
+			columnHelper.accessor("piece", {
+				header: () => "จำนวนชิ้น",
 				cell: (info) => info.getValue(),
 			}),
 			columnHelper.accessor("point", {
@@ -171,7 +171,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 									title1: original.title1,
 									title2: original.title2,
 									description: original.description,
-									price: +original.point,
+									piece: +original.piece,
 									point: +original.point,
 									original_picture: original.picture,
 									redeem_per_customer: +original.redeem_per_customer,
@@ -369,28 +369,38 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 									}));
 								}}
 							/>
-							<label htmlFor="uploadimg" className="mb-4">
-								{formValues.picture ? (
-									<img
-										src={formValues.picture}
-										className="w-32 h-32 rounded object-cover"
-										alt="product"
+							<div className="flex flex-col mb-4 gap-2 items-center">
+								<label
+									htmlFor="uploadimg"
+									className="cursor-pointer w-32 aspect-square"
+								>
+									{formValues.picture ? (
+										<img
+											src={formValues.picture}
+											className="w-32 h-32 aspect-square rounded object-cover"
+											alt="product"
+										/>
+									) : (
+										<div className="w-32 h-32 aspect-square bg-gray-100 rounded items-center justify-center flex">
+											Upload
+										</div>
+									)}
+								</label>
+								<small>
+									Image should be at least 300 x 300 px in PNG or JPG.
+								</small>
+							</div>
+							<div>
+								<div className="mb-4 w-full">
+									<label>Product Name</label>
+									<input
+										type="text"
+										className=" block w-full px-4 py-2 rounded border-2"
+										name="name"
+										onChange={updateFormValues}
+										value={formValues.name}
 									/>
-								) : (
-									<div className="w-32 h-32 bg-gray-100 rounded items-center justify-center flex">
-										Upload
-									</div>
-								)}
-							</label>
-							<div className="mb-4">
-								<label>Product Name</label>
-								<input
-									type="text"
-									className=" block w-full px-4 py-2 rounded border-2"
-									name="name"
-									onChange={updateFormValues}
-									value={formValues.name}
-								/>
+								</div>
 							</div>
 							<div className="mb-4">
 								<label>Title 1</label>
@@ -425,28 +435,6 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 							</div>
 							<div className="grid grid-cols-2 gap-4">
 								<div className="mb-4">
-									<label>Price</label>
-									<input
-										type="number"
-										className=" block w-full px-4 py-2 rounded border-2"
-										name="price"
-										onChange={updateFormValues}
-										value={formValues.price}
-									/>
-								</div>
-								<div className="mb-4">
-									<label>Trading Point</label>
-									<input
-										type="number"
-										className=" block w-full px-4 py-2 rounded border-2"
-										name="point"
-										onChange={updateFormValues}
-										value={formValues.point}
-									/>
-								</div>
-							</div>
-							<div className="grid grid-cols-2 gap-4">
-								<div className="mb-4">
 									<label>Start Time</label>
 									<input
 										type="date"
@@ -474,6 +462,28 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 											})
 										}
 										value={formValues.end_date.toISOString().split("T")[0]}
+									/>
+								</div>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="mb-4">
+									<label>Amount (Piece)</label>
+									<input
+										type="number"
+										className=" block w-full px-4 py-2 rounded border-2"
+										name="piece"
+										onChange={updateFormValues}
+										value={formValues.piece}
+									/>
+								</div>
+								<div className="mb-4">
+									<label>Trading Point</label>
+									<input
+										type="number"
+										className=" block w-full px-4 py-2 rounded border-2"
+										name="point"
+										onChange={updateFormValues}
+										value={formValues.point}
 									/>
 								</div>
 							</div>

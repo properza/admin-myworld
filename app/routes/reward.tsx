@@ -57,7 +57,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			const title1 = formData.get("title1");
 			const title2 = formData.get("title2");
 			const description = formData.get("description");
-			const price = formData.get("price");
+			const piece = formData.get("piece");
 			const point = formData.get("point");
 			const redeem_per_customer = formData.get("redeem_per_customer");
 			const start_date = formData.get("start_date");
@@ -96,7 +96,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						title1: title1 || "",
 						title2: title2 || "",
 						description: description || "",
-						price: +(price || 0),
+						piece: +(piece || 0),
 						point: +(point || 0),
 						redeem_per_customer: +(redeem_per_customer || 0),
 						start_date: start_date || "",
@@ -114,7 +114,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			const title1 = formData.get("title1");
 			const title2 = formData.get("title2");
 			const description = formData.get("description");
-			const price = formData.get("price");
+			const piece = formData.get("piece");
 			const point = formData.get("point");
 			const redeem_per_customer = formData.get("redeem_per_customer");
 			const start_date = formData.get("start_date");
@@ -157,7 +157,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						title1: title1 || "",
 						title2: title2 || "",
 						description: description || "",
-						price: +(price || 0),
+						piece: +(piece || 0),
 						point: +(point || 0),
 						redeem_per_customer: +(redeem_per_customer || 0),
 						start_date: start_date || "",
@@ -221,6 +221,7 @@ export default function Reward(): JSX.Element {
 
 	useEffect(() => {
 		if (orders) {
+			console.log(orders);
 			setRewardData(orders);
 		} else {
 			setRewardData([]);

@@ -57,7 +57,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					Accept: "application/json",
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ approve_status, shipment_status }),
+				body: JSON.stringify({
+					approve_status: approve_status || undefined,
+					shipment_status: shipment_status || undefined,
+				}),
 			},
 		);
 		if (!response.ok) throw new Error("error has occured");

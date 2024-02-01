@@ -11,9 +11,11 @@ import CustomerDetailsCard from "~/components/CustomerDetailsCard";
 import CustomerTradeDetailsCard from "~/components/CustomerTradeDetailsCard";
 import CustomTradesDetailsTable from "~/components/CustomTradesDetailsTable";
 import Layout from "~/components/Layout";
+import config from "~/config";
 import { Customer } from "~/models/customer.server";
 import { getTradesDetail, TradesDetail } from "~/models/trade.server";
 import { getUserData, requireUserId } from "~/services/session.server";
+import { constructURL } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 
@@ -69,6 +71,44 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 	const tradesDetail = await getTradesDetail(accessToken, params.tradesId);
 	return json({ tradesDetail });
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+	await requireUserId(request);
+	const formData = await request.formData();
+
+	await requireUserId(request);
+
+	const { accessToken } = await getUserData(request);
+
+	const id = formData.get("id");
+	const approve_status = formData.get("approve_status");
+	const shipment_status = formData.get("shipment_status");
+	try {
+		const response = await fetch(
+			constructURL(config.api.baseUrl, `trades/${id}/status`),
+			{
+				method: "PUT",
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					approve_status: approve_status || undefined,
+					shipment_status: shipment_status || undefined,
+				}),
+			},
+		);
+		if (!response.ok) {
+			console.log(await response.json());
+			throw new Error();
+		}
+		return json({ success: 1 });
+	} catch (error) {
+		console.log(error);
+		return json({ error: "error has occured" }, { status: 400 });
+	}
 };
 
 export default function Redeem(): JSX.Element {
