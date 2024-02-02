@@ -136,16 +136,16 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 				cell: (info) => <p className="text-[#0047FF]">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("piece", {
-				header: () => <p className="text-right">จำนวนชิ้น</p>,
-				cell: (info) => <p className="text-right w-full">{info.getValue()}</p>,
+				header: () => <p className="text-center">จำนวนชิ้น</p>,
+				cell: (info) => <p className="text-center w-full">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("point", {
-				header: () => <p className="text-right">จำนวน Point ที่ใช้แลก</p>,
-				cell: (info) => <p className="text-right">{info.getValue()}</p>,
+				header: () => <p className="text-center">จำนวน Point ที่ใช้แลก</p>,
+				cell: (info) => <p className="text-center">{info.getValue()}</p>,
 			}),
 			columnHelper.accessor("remaining", {
-				header: () => <p className="text-right">คงเหลือ</p>,
-				cell: (info) => <p className="text-right">{info.getValue()}</p>,
+				header: () => <p className="text-center">คงเหลือ</p>,
+				cell: (info) => <p className="text-center">{info.getValue()}</p>,
 			}),
 
 			columnHelper.accessor("is_publish", {
@@ -213,7 +213,6 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	});
-
 	const submit = useSubmit();
 
 	const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {

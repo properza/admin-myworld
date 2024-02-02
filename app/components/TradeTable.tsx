@@ -20,6 +20,7 @@ import {
 	useActionData,
 	useNavigate,
 	useRevalidator,
+	useSearchParams,
 	useSubmit,
 } from "@remix-run/react";
 
@@ -184,7 +185,9 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
 	let sevenDaysAgo = new Date(today);
 	sevenDaysAgo.setDate(today.getDate() - 7);
 	const submit = useSubmit();
-
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
+	const currentpage = +(searchParams.get("page") || "1");
 	const [value, setValue] = useState<any>({
 		startDate: sevenDaysAgo,
 		endDate: new Date(),
@@ -269,7 +272,7 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
 				),
 			}),
 		],
-		[],
+		[data],
 	);
 	const table = useReactTable({
 		data: data.data,
@@ -352,15 +355,16 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
 				<span className="flex items-center gap-1">
 					<div>Page</div>
 					<strong>
-						{table.getState().pagination.pageIndex + 1} of{" "}
-						{table.getPageCount()}
+						{currentpage} of {data.totalPage}
 					</strong>
 				</span>
 
 				<PaginationNavigator
-					currentPage={table.getState().pagination.pageIndex + 1}
-					totalPage={table.getPageCount()}
-					setPageIndex={table.setPageIndex}
+					currentPage={currentpage}
+					totalPage={data.totalPage}
+					setPageIndex={(e) => {
+						navigate(`/trades?page=${e}`, { replace: true });
+					}}
 				/>
 			</div>
 		</div>

@@ -30,8 +30,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { searchParams } = new URL(request.url);
 
 	const filter = searchParams.get("filter");
+	const page = +(searchParams.get("page") || 1);
 
-	const trades = await getTrades(accessToken, { search: filter, perPage: 10 });
+	const trades = await getTrades(accessToken, {
+		search: filter,
+		perPage: 10,
+		page: `${page}`,
+	});
 
 	return json({ trades });
 };
@@ -84,7 +89,7 @@ export default function Redeem(): JSX.Element {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const location = useLocation();
 
-	useMemo(() => {
+	useEffect(() => {
 		if (trades && trades.data) {
 			setTradeMetadata({
 				currentPage: trades.currentPage,
