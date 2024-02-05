@@ -51,7 +51,7 @@ dependencies:
     specifier: ^7.0.3
     version: 7.0.3
   date-fns:
-    specifier: ^3.2.0
+    specifier: ^3.3.1
     version: 3.3.1
   dayjs:
     specifier: ^1.11.10

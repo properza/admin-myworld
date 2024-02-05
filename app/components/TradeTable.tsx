@@ -126,7 +126,7 @@ const EditAprroveStatus: FC<{
 		</Form>
 	);
 };
-
+import { format } from "date-fns";
 const EditShipmentStatus: FC<{
 	id: string;
 	approve_status: string;
@@ -210,7 +210,11 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
 			}),
 			columnHelper.accessor("created_at", {
 				header: () => "วันที่แลกซื้อ",
-				cell: (info) => <span className="text-nowrap">{info.getValue()}</span>,
+				cell: (info) => (
+					<span className="text-nowrap">
+						{format(info.getValue(), "d MMMM yyyy")}
+					</span>
+				),
 			}),
 			columnHelper.accessor("customer.name", {
 				header: () => "ชื่อผู้ใช้",
