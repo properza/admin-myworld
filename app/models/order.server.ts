@@ -26,7 +26,7 @@ export interface Order {
   weight: number;
   created_at: string;
   updated_at: string;
-  salesType: string;
+  orderType: string;
   slipImageUrl: string;
 }
 

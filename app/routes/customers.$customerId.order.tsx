@@ -19,7 +19,7 @@ interface CustomerOrderDetail {
   productQuantity: number;
   totalPrice: number;
   pointGained: number;
-  salesType: string;
+  orderType: string;
   slipImageUrl: string;
   paymentStatus: string;
   shipmentStatus: string;
@@ -67,14 +67,14 @@ const columns = [
     cell: (info) => info.getValue(),
     size: 128,
   }),
-  columnHelper.accessor("salesType", {
+  columnHelper.accessor("orderType", {
     header: () => "Sales Type",
     cell: (info) => info.getValue() || "-", //salesType
     size: 128,
   }),
   columnHelper.accessor("slipImageUrl", {
     header: () => "Transfer Slip",
-    cell: (info) => <TransferSlipBadge isPaid={isPaid(info.getValue())} />, //slipImageUrl
+    cell: (info) =>  <TransferSlipBadge isSlip={info.getValue()} />,
     size: 128,
   }),
   columnHelper.accessor("paymentStatus", {
@@ -110,18 +110,18 @@ function CustomerOrderDetailsTable(): JSX.Element {
   const orders = useMemo(() => {
     const orderDetail: CustomerOrderDetail[] = customer.order.map(
       (eachOrder, index) => ({
-        itemNo: index + 1,
-        orderId: eachOrder.orderNumber,
-        customerName: customer.name,
-        productName: eachOrder.orderItems[0].name,
-        productQuantity: eachOrder.orderItems[0].quantity,
-        totalPrice: eachOrder.totalPrice,
-        pointGained: eachOrder.point ?? 0,
-        salesType: eachOrder.salesType, // salesType
-        slipImageUrl: eachOrder.slipImageUrl, //slipImageUrl
-        paymentStatus: eachOrder.paymentStatus,
-        shipmentStatus: eachOrder.shipmentStatus,
-      }),
+          itemNo: index + 1,
+          orderId: eachOrder.orderNumber,
+          customerName: customer.name,
+          productName: eachOrder.orderItems[0].name,
+          productQuantity: eachOrder.orderItems[0].quantity,
+          totalPrice: eachOrder.totalPrice,
+          pointGained: eachOrder.point ?? 0,
+          orderType: eachOrder.orderType, // salesType
+          slipImageUrl: eachOrder.slipImageUrl, //slipImageUrl
+          paymentStatus: eachOrder.paymentStatus,
+          shipmentStatus: eachOrder.shipmentStatus,
+        }),
     );
 
     return orderDetail;
@@ -179,20 +179,22 @@ function CustomerOrderDetailsTable(): JSX.Element {
 }
 
 //fix
-function TransferSlipBadge({ isPaid }: { isPaid: boolean }): JSX.Element {
+function TransferSlipBadge({ isSlip }: { isSlip: string }): JSX.Element {
   return (
-    <div className="w-[7.5rem] h-9 p-2.5 bg-white border-gray-400 justify-start items-center gap-2.5 inline-flex">
-      <div
-        className={cn(
-          isPaid ? "bg-[#cbf4cc]" : "bg-[#f4ebcb]",
-          "w-full px-1.5 py-1 rounded-full items-center gap-1 flex",
-        )}
-      >
-        <div className="inline-flex justify-start gap-2">
-          <p className="self-center text-black text-xs font-normal font-poppins leading-3">
-            {isPaid ? "ชำระเงินแล้ว" : "-"}
-          </p>
-        </div>
+    <div className="w-[7.5rem] h-9 p-2.5 bg-white justify-center items-center gap-2.5 inline-flex">
+      <div className="inline-flex justify-start gap-2">
+        <p className="self-center text-black text-xs font-normal font-poppins leading-3">
+          {isSlip ? (
+            <img
+              className="justify-center items-center w-8 h-8 border border-gray-400 full"
+              src={isSlip}
+              alt="paySlip"
+              draggable="false"
+            />
+          ) : (
+            "-"
+          )}
+        </p>
       </div>
     </div>
   );
