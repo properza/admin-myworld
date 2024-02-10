@@ -5,11 +5,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { CustomerWithItemNo } from "~/models/customer.server";
 import { OrderWithItemNo } from "~/models/order.server";
 import { cn } from "~/tailwind";
+import "~/modal.css";
 
 interface CustomerOrderDetail {
   itemNo: number;
@@ -69,12 +70,12 @@ const columns = [
   }),
   columnHelper.accessor("orderType", {
     header: () => "Sales Type",
-    cell: (info) => info.getValue() || "-", //salesType
+    cell: (info) => info.getValue() || "-",
     size: 128,
   }),
   columnHelper.accessor("slipImageUrl", {
     header: () => "Transfer Slip",
-    cell: (info) =>  <TransferSlipBadge isSlip={info.getValue()} />,
+    cell: (info) => <TransferSlipBadge isSlip={info.getValue()} />,
     size: 128,
   }),
   columnHelper.accessor("paymentStatus", {
@@ -110,18 +111,18 @@ function CustomerOrderDetailsTable(): JSX.Element {
   const orders = useMemo(() => {
     const orderDetail: CustomerOrderDetail[] = customer.order.map(
       (eachOrder, index) => ({
-          itemNo: index + 1,
-          orderId: eachOrder.orderNumber,
-          customerName: customer.name,
-          productName: eachOrder.orderItems[0].name,
-          productQuantity: eachOrder.orderItems[0].quantity,
-          totalPrice: eachOrder.totalPrice,
-          pointGained: eachOrder.point ?? 0,
-          orderType: eachOrder.orderType, // salesType
-          slipImageUrl: eachOrder.slipImageUrl, //slipImageUrl
-          paymentStatus: eachOrder.paymentStatus,
-          shipmentStatus: eachOrder.shipmentStatus,
-        }),
+        itemNo: index + 1,
+        orderId: eachOrder.orderNumber,
+        customerName: customer.name,
+        productName: eachOrder.orderItems[0].name,
+        productQuantity: eachOrder.orderItems[0].quantity,
+        totalPrice: eachOrder.totalPrice,
+        pointGained: eachOrder.point ?? 0,
+        orderType: eachOrder.orderType, // salesType
+        slipImageUrl: eachOrder.slipImageUrl,
+        paymentStatus: eachOrder.paymentStatus,
+        shipmentStatus: eachOrder.shipmentStatus,
+      }),
     );
 
     return orderDetail;
@@ -178,19 +179,50 @@ function CustomerOrderDetailsTable(): JSX.Element {
   );
 }
 
-//fix
+export const ModalSlip = ({
+  src,
+  alt,
+  onClose,
+}: {
+  src: string;
+  alt: string;
+  onClose: () => void;
+}) => {
+  return (
+    <div className="modal">
+      <span className="close" onClick={onClose}>
+        &times;
+      </span>
+      <img className="modal-content" src={src} alt={alt} />
+    </div>
+  );
+};
+
 function TransferSlipBadge({ isSlip }: { isSlip: string }): JSX.Element {
+  const [isOpen, setIsOpen] = useState(false);
+  const showModal = () => setIsOpen(true);
+
   return (
     <div className="w-[7.5rem] h-9 p-2.5 bg-white justify-center items-center gap-2.5 inline-flex">
       <div className="inline-flex justify-start gap-2">
         <p className="self-center text-black text-xs font-normal font-poppins leading-3">
           {isSlip ? (
-            <img
-              className="justify-center items-center w-8 h-8 border border-gray-400 full"
-              src={isSlip}
-              alt="paySlip"
-              draggable="false"
-            />
+            <>
+              <img
+                className="justify-center items-center w-8 h-8 border border-gray-400 full image"
+                src={isSlip}
+                onClick={showModal}
+                alt="paySlip"
+                draggable="false"
+              />
+              {isOpen && (
+                <ModalSlip
+                  src={isSlip}
+                  alt="showPaySlip"
+                  onClose={() => setIsOpen(false)}
+                />
+              )}
+            </>
           ) : (
             "-"
           )}
