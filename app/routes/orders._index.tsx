@@ -2,7 +2,6 @@ import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
 import { useLoaderData, useLocation, useSearchParams } from "@remix-run/react";
 import { useState, useMemo, useEffect } from "react";
 
-import Exchange from "~/components/Exchange";
 import FrontStore from "~/components/FrontStore";
 import Layout from "~/components/Layout";
 import OrderTable from "~/components/OrderTable";
@@ -141,7 +140,6 @@ function OrderIndexPage(): JSX.Element {
               <OrderTable data={{ ...orderMetadata, data: orderData }} />
             ),
           },
-          { label: "การแลกซื้อสินค้า", content: <Exchange /> },
           {
             label: "จำหน่ายหน้าร้าน",
             content: (

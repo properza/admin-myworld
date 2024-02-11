@@ -38,7 +38,7 @@ function PaginationNavigator({
 
 	const handlePageChange = (page: number) => {
 		setSelectedPage(page);
-		setPageIndex(page);
+		setPageIndex(page - 1);
 	};
 
 	return (

@@ -367,7 +367,7 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
 					currentPage={currentpage}
 					totalPage={data.totalPage}
 					setPageIndex={(e) => {
-						navigate(`/trades?page=${e}`, { replace: true });
+						navigate(`/trades?page=${e + 1}`, { replace: true });
 					}}
 				/>
 			</div>
