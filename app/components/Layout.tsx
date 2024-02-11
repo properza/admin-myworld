@@ -26,7 +26,7 @@ export default function Layout({ title, pathname, isSubRoute, returnRoute, child
       <div className="flex-1 flex flex-col">
         <Topbar title={title} isSubRoute={isSubRoute} returnRoute={returnRoute} />
 
-        <main className="flex-1 bg-[#f7f7f8] p-4">
+        <main className={`flex-1 bg-[#f7f7f8] p-4`}>
           {children}
           <LogoutModal isModalOpen={isLogoutModalOpen} setIsModalOpen={setLogoutModalOpen} />
         </main>
