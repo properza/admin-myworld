@@ -1,30 +1,44 @@
 import React, { useState } from "react";
+import Datepicker from "react-tailwindcss-datepicker";
+
 import Search from "./Search";
+
 
 interface TabItem {
   label: string;
   content?: React.ReactNode;
 }
 
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
+
 interface TabsProps {
   tabs: TabItem[];
   search?: string;
   setSearch?: React.Dispatch<React.SetStateAction<string>>;
-  isSearch?: boolean;
+  isShowSearch?: boolean;
+  isShowDate?: boolean;
   onChange?: (currentTab: number) => void;
+  dateValue?: DateType;
+  onChangeDate?: (value: DateType) => void;
 }
 
 const TabsComponent: React.FC<TabsProps> = ({
   tabs,
   search,
   setSearch,
-  isSearch = false,
-  onChange
+  isShowSearch = false,
+  isShowDate = false,
+  onChange,
+  dateValue,
+  onChangeDate,
 }) => {
   const [currentTabs, setCurrentTabs] = useState(0);
   const handleTabClick = (index: number) => {
     setCurrentTabs(index);
-    onChange?.(index)
+    onChange?.(index);
   };
 
   return (
@@ -44,7 +58,18 @@ const TabsComponent: React.FC<TabsProps> = ({
             </li>
           ))}
         </ul>
-        {isSearch ? <Search filter={search as string} setFilter={setSearch!} /> : null}
+        <div className="flex flex-row gap-x-3">
+          {isShowDate ? (
+            <Datepicker
+              primaryColor={"blue"}
+              value={dateValue!}
+              onChange={(value) => onChangeDate && onChangeDate(value as DateType)}
+            />
+          ) : null}
+          {isShowSearch ? (
+            <Search filter={search as string} setFilter={setSearch!} />
+          ) : null}
+        </div>
       </div>
       <div className="h-full">
         {tabs.map((tab, index) => (

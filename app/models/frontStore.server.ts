@@ -12,6 +12,8 @@ interface GetFrontStoreParams {
   page: string | null | undefined;
   perPage: number | null | undefined;
   search: string | null | undefined;
+  startAt: string | null | undefined
+  endAt: string | null | undefined
 }
 
 export interface FrontStoreData {
@@ -25,6 +27,10 @@ export interface FrontStoreData {
   slipImageUrl: string;
   manual_by: string;
   updated_at?: string;
+  customer: {
+    picture: string
+    name: string;
+  }
 }
 
 export interface FrontStoreDataWithItemNo extends FrontStoreData {
@@ -51,6 +57,14 @@ export async function getFrontStore(
 
   if (params?.search) {
     endpointURL.searchParams.set("search", params.search);
+  }
+
+  if (params?.startAt) {
+    endpointURL.searchParams.set("startAt", String(params.startAt));
+  }
+  
+  if (params?.endAt) {
+    endpointURL.searchParams.set("endAt", String(params.endAt));
   }
 
   const response = await fetch(endpointURL.toString(), {
