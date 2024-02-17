@@ -89,6 +89,10 @@ export interface OrderData {
   paymentStatus: string
   shipmentStatus: string
   lastUpdatedAt: string
+  customer: {
+    picture: string
+    name: string;
+  }
 }
 
 export interface OrderDataWithItemNo extends OrderData {
@@ -102,6 +106,9 @@ export interface OrderResponse extends OrderMetadata {
 interface GetOrderParams {
   page: string | null | undefined
   perPage: number | null | undefined
+  startAt: string | null | undefined
+  endAt: string | null | undefined
+  search: string | null | undefined
 }
 
 export async function getOrders (accessToken: string, params?: Partial<GetOrderParams>): Promise<OrderResponse> {
@@ -113,6 +120,18 @@ export async function getOrders (accessToken: string, params?: Partial<GetOrderP
 
   if (params?.perPage) {
     endpointURL.searchParams.set("perPage", String(params.perPage));
+  }
+
+  if (params?.search) {
+    endpointURL.searchParams.set("search", params.search);
+  }
+
+  if (params?.startAt) {
+    endpointURL.searchParams.set("startAt", String(params.startAt));
+  }
+  
+  if (params?.endAt) {
+    endpointURL.searchParams.set("endAt", String(params.endAt));
   }
 
   const response = await fetch(endpointURL.toString(), {

@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
 import { useLoaderData, useLocation, useSearchParams } from "@remix-run/react";
+import { format } from "date-fns";
 import { useState, useMemo, useEffect } from "react";
 
 import FrontStore from "~/components/FrontStore";
@@ -17,6 +18,12 @@ import {
   getOrders,
 } from "~/models/order.server";
 import { getUserData, requireUserId } from "~/services/session.server";
+import { convertUTC } from "~/utils";
+
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUserId(request);
@@ -26,8 +33,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const page = searchParams.get("page");
   const filter = searchParams.get("filter");
-  const orders = await getOrders(accessToken, { page });
-  const frontStore = await getFrontStore(accessToken, { page, search: filter });
+  const startAt = searchParams.get("startAt");
+  const endAt = searchParams.get("endAt");
+  const orders = await getOrders(accessToken, {
+    page,
+    search: filter,
+    startAt,
+    endAt,
+  });
+  const frontStore = await getFrontStore(accessToken, {
+    page,
+    search: filter,
+    startAt,
+    endAt,
+  });
 
   return json({ orders, frontStore });
 };
@@ -57,6 +76,43 @@ function OrderIndexPage(): JSX.Element {
       totalPage: 1,
       totalRow: 0,
     });
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  const defaultDate = {
+    startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
+    endDate: format(today, "yyyy-MM-dd"),
+  };
+  const [dateValue, setDateValue] = useState<DateType>(defaultDate);
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const updatedSearchParams = new URLSearchParams(prev);
+        if (dateValue?.startDate) {
+          // start date
+          updatedSearchParams.set(
+            "startAt",
+            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
+          );
+        } else {
+          updatedSearchParams.delete("startAt");
+        }
+        if (dateValue?.endDate) {
+          // end date
+          updatedSearchParams.set(
+            "endAt",
+            convertUTC({ dateValue: dateValue.endDate }),
+          );
+        } else {
+          updatedSearchParams.delete("endAt");
+        }
+
+        return updatedSearchParams;
+      },
+      { preventScrollReset: true },
+    );
+  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
   useEffect(() => {
     setSearchParams(
@@ -122,6 +178,10 @@ function OrderIndexPage(): JSX.Element {
     }
   }, [orders]);
 
+  const handleChangeDate = (newValue: DateType) => {
+    setDateValue(newValue);
+  };
+
   return (
     <Layout
       title="Order"
@@ -130,9 +190,16 @@ function OrderIndexPage(): JSX.Element {
       pathname={location.pathname}
     >
       <TabsComponent
-        isSearch
+        isShowSearch
+        isShowDate
         search={searchQuery}
         setSearch={setSearchQuery}
+        dateValue={dateValue}
+        onChangeDate={handleChangeDate}
+        onChange={() => {
+          setDateValue(defaultDate);
+          setSearchQuery("");
+        }}
         tabs={[
           {
             label: "รายการสั่งซื้อ",

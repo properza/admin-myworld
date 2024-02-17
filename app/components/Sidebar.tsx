@@ -84,7 +84,7 @@ export default function Sidebar({
 
 				<div className="mt-2 text-center">
 					<span className="text-xl font-kanit font-medium block text-blackrose">
-						My Beer
+						My World
 					</span>
 					<span className="text-xl font-kanit font-medium block text-blackrose">
 						Back Office

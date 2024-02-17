@@ -89,12 +89,12 @@ const columns = [
 		),
 		size: 124,
 	}),
-	columnHelper.accessor("tradeId", {
-		id: "trade_detail",
-		header: "รายละเอียด",
-		cell: (info) => <TradeDetailButton tradeId={info.getValue()} />,
-		size: 112,
-	}),
+	// columnHelper.accessor("tradeId", {
+	// 	id: "trade_detail",
+	// 	header: "รายละเอียด",
+	// 	cell: (info) => <TradeDetailButton tradeId={info.getValue()} />,
+	// 	size: 112,
+	// }),
 ];
 
 const isDelivered = (value: string) => value === "SHIPPED_ALL";
