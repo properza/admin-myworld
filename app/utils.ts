@@ -21,7 +21,9 @@ export function safeRedirect(
   return to;
 }
 
-export function useMatchesData(id: string,): Record<string, unknown> | undefined {
+export function useMatchesData(
+  id: string,
+): Record<string, unknown> | undefined {
   const matchingRoutes = useMatches();
   const route = useMemo(
     () => matchingRoutes.find((route) => route.id === id),
@@ -59,9 +61,11 @@ export function useUser(): User {
   return maybeUser;
 }
 
-export function constructURL (baseURL: string, endpoint: string): URL {
-  const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : baseURL + '/';
-  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+export function constructURL(baseURL: string, endpoint: string): URL {
+  const normalizedBaseURL = baseURL.endsWith("/") ? baseURL : baseURL + "/";
+  const normalizedEndpoint = endpoint.startsWith("/")
+    ? endpoint.substring(1)
+    : endpoint;
   return new URL(normalizedEndpoint, normalizedBaseURL);
 }
 
@@ -77,10 +81,10 @@ const ThaiMonthMapping: Record<string, string> = {
   ["September"]: "ก.ย.",
   ["October"]: "ต.ค.",
   ["November"]: "พ.ย.",
-  ["December"]: "ธ.ค."
-}
+  ["December"]: "ธ.ค.",
+};
 
-export function getThaiTimestamp (timestamp: string): string {
+export function getThaiTimestamp(timestamp: string): string {
   const parsedISO = parseISO(timestamp);
 
   const date = format(parsedISO, "dd");
@@ -90,3 +94,16 @@ export function getThaiTimestamp (timestamp: string): string {
 
   return `${date} ${month} ${year} ${time}`;
 }
+
+export const convertUTC = ({
+  dateValue,
+  isStart,
+}: {
+  dateValue: Date | string;
+  isStart?: boolean;
+}) => {
+  const date = new Date(dateValue);
+  const timeSuffix = isStart ? "T00:00:00.000Z" : "T23:59:59.999Z"
+  const utcDate = format(date, "yyyy-MM-dd") + timeSuffix;
+  return utcDate;
+};
