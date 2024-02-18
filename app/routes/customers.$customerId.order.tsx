@@ -77,12 +77,6 @@ const columns = [
 		),
 		size: 128,
 	}),
-	columnHelper.accessor("orderId", {
-		id: "order_detail",
-		header: () => "รายละเอียด",
-		cell: (info) => <OrderDetailButton orderId={info.getValue()} />,
-		size: 128,
-	}),
 ];
 
 const isPaid = (value: string) => value === "PAID";
