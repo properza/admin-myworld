@@ -1,4 +1,4 @@
-import { Link, useOutletContext } from "@remix-run/react";
+import { useOutletContext } from "@remix-run/react";
 import {
 	createColumnHelper,
 	flexRender,
@@ -204,24 +204,24 @@ function ShippingStatusBadge({
 	);
 }
 
-function OrderDetailButton({ orderId }: { orderId: string }): JSX.Element {
-	return (
-		<div className="h-6 px-1.5 py-0.5 bg-white rounded border border-sky-400 justify-start items-center gap-1 inline-flex">
-			<Link
-				to={`/orders/${orderId}`}
-				className="text-sky-400 text-xs font-normal font-roboto"
-			>
-				ดูรายละเอียด
-			</Link>
-			<img
-				src="/images/chevron-down.svg"
-				alt="More options"
-				className="w-2 h-2 justify-center items-center"
-				draggable="false"
-			/>
-		</div>
-	);
-}
+// function OrderDetailButton({ orderId }: { orderId: string }): JSX.Element {
+// 	return (
+// 		<div className="h-6 px-1.5 py-0.5 bg-white rounded border border-sky-400 justify-start items-center gap-1 inline-flex">
+// 			<Link
+// 				to={`/orders/${orderId}`}
+// 				className="text-sky-400 text-xs font-normal font-roboto"
+// 			>
+// 				ดูรายละเอียด
+// 			</Link>
+// 			<img
+// 				src="/images/chevron-down.svg"
+// 				alt="More options"
+// 				className="w-2 h-2 justify-center items-center"
+// 				draggable="false"
+// 			/>
+// 		</div>
+// 	);
+// }
 
 function CircleFillIcon({ classNames }: { classNames: string }): JSX.Element {
 	return (
