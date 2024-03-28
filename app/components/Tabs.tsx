@@ -3,7 +3,6 @@ import Datepicker from "react-tailwindcss-datepicker";
 
 import Search from "./Search";
 
-
 interface TabItem {
   label: string;
   content?: React.ReactNode;
@@ -63,7 +62,9 @@ const TabsComponent: React.FC<TabsProps> = ({
             <Datepicker
               primaryColor={"blue"}
               value={dateValue!}
-              onChange={(value) => onChangeDate && onChangeDate(value as DateType)}
+              onChange={(value) =>
+                onChangeDate && onChangeDate(value as DateType)
+              }
             />
           ) : null}
           {isShowSearch ? (

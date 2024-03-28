@@ -22,4 +22,4 @@ const UsernameSection = ({
   );
 };
 
-export default UsernameSection
+export default UsernameSection;

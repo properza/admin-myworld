@@ -103,7 +103,7 @@ export const convertUTC = ({
   isStart?: boolean;
 }) => {
   const date = new Date(dateValue);
-  const timeSuffix = isStart ? "T00:00:00.000Z" : "T23:59:59.999Z"
+  const timeSuffix = isStart ? "T00:00:00.000Z" : "T23:59:59.999Z";
   const utcDate = format(date, "yyyy-MM-dd") + timeSuffix;
   return utcDate;
 };

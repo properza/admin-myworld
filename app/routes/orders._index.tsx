@@ -7,6 +7,7 @@ import FrontStore from "~/components/FrontStore";
 import Layout from "~/components/Layout";
 import OrderTable from "~/components/OrderTable";
 import TabsComponent from "~/components/Tabs";
+import TradeListTable from "~/components/TradeListTable";
 import {
   FrontStoreDataWithItemNo,
   FrontStoreMetadata,
@@ -28,7 +29,7 @@ interface DateType {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUserId(request);
 
-  const { accessToken } = await getUserData(request);
+  var { accessToken } = await getUserData(request);
   const { searchParams } = new URL(request.url);
 
   const page = searchParams.get("page");
@@ -48,7 +49,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     endAt,
   });
 
-  return json({ orders, frontStore });
+  return json({ orders, frontStore, accessToken });
 };
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Order" }];
@@ -56,7 +57,7 @@ export const meta: MetaFunction = () => [{ title: "My Beer | Order" }];
 function OrderIndexPage(): JSX.Element {
   const location = useLocation();
 
-  const { orders, frontStore } = useLoaderData<typeof loader>();
+  const { orders, frontStore, accessToken } = useLoaderData<typeof loader>();
   const [orderData, setOrderData] = useState<OrderDataWithItemNo[]>([]);
   const [frontStoreData, setFrontStoreDate] = useState<
     FrontStoreDataWithItemNo[]
@@ -181,7 +182,7 @@ function OrderIndexPage(): JSX.Element {
   const handleChangeDate = (newValue: DateType) => {
     setDateValue(newValue);
   };
-
+  // console.log(frontStoreData);
   return (
     <Layout
       title="Order"
@@ -212,6 +213,15 @@ function OrderIndexPage(): JSX.Element {
             content: (
               <FrontStore
                 data={{ ...frontStoreMetadata, data: frontStoreData }}
+              />
+            ),
+          },
+          {
+            label: "รายการซื้อMy Beer",
+            content: (
+              <TradeListTable
+                data={{ ...frontStoreMetadata, data: frontStoreData }}
+                accessToken={accessToken}
               />
             ),
           },

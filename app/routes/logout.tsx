@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 
 import { logout } from "~/services/session.server";
 
-export async function action ({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   return logout(request);
 }
 

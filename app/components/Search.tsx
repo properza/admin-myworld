@@ -1,16 +1,25 @@
-import { cn } from "~/tailwind"
+import { cn } from "~/tailwind";
 
-import DebouncedInput from "./DebouncedInput"
+import DebouncedInput from "./DebouncedInput";
 
 interface SearchProps {
-  className?: string
-  filter: string
-  setFilter: React.Dispatch<React.SetStateAction<string>>
+  className?: string;
+  filter: string;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function Search ({ className, filter, setFilter }: SearchProps): JSX.Element {
+export default function Search({
+  className,
+  filter,
+  setFilter,
+}: SearchProps): JSX.Element {
   return (
-    <div className={cn("w-36 h-10 px-2 py-1 bg-white rounded-lg border border-sky-400 justify-between items-center gap-1 inline-flex", className)}>
+    <div
+      className={cn(
+        "w-36 h-10 px-2 py-1 bg-white rounded-lg border border-sky-400 justify-between items-center gap-1 inline-flex",
+        className,
+      )}
+    >
       <div className="w-5 h-5 justify-center items-center flex">
         <img
           src="/images/search.svg"
@@ -27,5 +36,5 @@ export default function Search ({ className, filter, setFilter }: SearchProps): 
         placeholder="Search"
       />
     </div>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-
 export const singleton = <Value>(
   name: string,
   valueFactory: () => Value,

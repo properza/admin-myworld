@@ -14,16 +14,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const users = await getUsers(accessToken);
 
   return json({ users });
-}
+};
 export const meta: MetaFunction = () => [{ title: "My Beer | Admin" }];
 
-export default function Admin (): JSX.Element {
+export default function Admin(): JSX.Element {
   const location = useLocation();
 
   const { users } = useLoaderData<typeof loader>();
 
   const [userData, setUserData] = useState<UserWithItemNo[]>([]);
-  const [userMetadata, setUserMetadata] = useState<UserMetadata>({ currentPage: 1, perPage: 0, totalPage: 1, totalRow: 0 });
+  const [userMetadata, setUserMetadata] = useState<UserMetadata>({
+    currentPage: 1,
+    perPage: 0,
+    totalPage: 1,
+    totalRow: 0,
+  });
   const [filter, setFilter] = useState<string>("");
 
   useMemo(() => {
@@ -32,7 +37,7 @@ export default function Admin (): JSX.Element {
         currentPage: users.currentPage,
         totalPage: users.totalPage,
         totalRow: users.totalRow,
-        perPage: users.perPage
+        perPage: users.perPage,
       });
 
       const data: UserWithItemNo[] = users.data.map((user, index) => ({
@@ -42,19 +47,33 @@ export default function Admin (): JSX.Element {
         email: user.email,
         phoneNumber: user.phone,
         canDelete: user.can_delete,
-        createdAt: user.created_at
+        createdAt: user.created_at,
       }));
 
       setUserData(data);
     } else {
-      setUserMetadata({ currentPage: 1, totalPage: 1, totalRow: 0, perPage: 10 });
+      setUserMetadata({
+        currentPage: 1,
+        totalPage: 1,
+        totalRow: 0,
+        perPage: 10,
+      });
       setUserData([]);
     }
   }, [users]);
 
   return (
-    <Layout title="Admin" isSubRoute={false} returnRoute="" pathname={location.pathname}>
-      <UserTable data={{ ...userMetadata, data: userData }} filter={filter} setFilter={setFilter} />
+    <Layout
+      title="Admin"
+      isSubRoute={false}
+      returnRoute=""
+      pathname={location.pathname}
+    >
+      <UserTable
+        data={{ ...userMetadata, data: userData }}
+        filter={filter}
+        setFilter={setFilter}
+      />
     </Layout>
-  )
+  );
 }

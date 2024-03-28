@@ -2,17 +2,25 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useRef } from "react";
 
 interface LogoutModalProps {
-  isModalOpen: boolean
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function LogoutModal ({ isModalOpen, setIsModalOpen }: LogoutModalProps): JSX.Element {
+function LogoutModal({
+  isModalOpen,
+  setIsModalOpen,
+}: LogoutModalProps): JSX.Element {
   const cancelButtonRef = useRef(null);
 
   return (
     <div className="z-10">
       <Transition.Root show={isModalOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setIsModalOpen}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          initialFocus={cancelButtonRef}
+          onClose={setIsModalOpen}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -39,9 +47,17 @@ function LogoutModal ({ isModalOpen, setIsModalOpen }: LogoutModalProps): JSX.El
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                   <div className="sm:flex sm:flex-col">
                     <div className="sm:flex gap-3 pb-3 items-center">
-                      <img src="/images/logout.svg" alt="Logout" draggable="false" className="h-6 w-6"/>
+                      <img
+                        src="/images/logout.svg"
+                        alt="Logout"
+                        draggable="false"
+                        className="h-6 w-6"
+                      />
 
-                      <Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-900">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-bold leading-6 text-gray-900"
+                      >
                         Logout
                       </Dialog.Title>
                     </div>
@@ -50,7 +66,6 @@ function LogoutModal ({ isModalOpen, setIsModalOpen }: LogoutModalProps): JSX.El
                   </div>
 
                   <div className="mt-6 sm:mt-4 sm:flex sm:flex-row-reverse">
-
                     <form action="/logout" method="post">
                       <button
                         type="submit"
@@ -77,7 +92,7 @@ function LogoutModal ({ isModalOpen, setIsModalOpen }: LogoutModalProps): JSX.El
         </Dialog>
       </Transition.Root>
     </div>
-  )
+  );
 }
 
 export default LogoutModal;

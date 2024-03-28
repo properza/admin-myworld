@@ -4,7 +4,12 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useSearchParams, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 
 import { verifyLogin } from "~/models/user.server";
@@ -25,16 +30,28 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const password = formData.get("password");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
-  if (!username || (typeof username !== 'string' || username.length === 0)) {
+  if (!username || typeof username !== "string" || username.length === 0) {
     return json(
-      { errors: { auth: null, username: 'Username is required', password: null } },
-      { status: 400 }
+      {
+        errors: {
+          auth: null,
+          username: "Username is required",
+          password: null,
+        },
+      },
+      { status: 400 },
     );
   }
 
   if (!password || typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { auth: null, username: null, password: "Password is required" } },
+      {
+        errors: {
+          auth: null,
+          username: null,
+          password: "Password is required",
+        },
+      },
       { status: 400 },
     );
   }
@@ -43,16 +60,28 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (!user?.id) {
     return json(
-      { errors: { auth: "Invalid username or password", username: null, password: null } },
+      {
+        errors: {
+          auth: "Invalid username or password",
+          username: null,
+          password: null,
+        },
+      },
       { status: 400 },
     );
   }
 
   if (user && (!user.id || !user.accessToken || !user.refreshToken)) {
     return json(
-      { errors: { auth: "Authentication failed. Please try again!", username: null, password: null } },
-      { status: 400 }
-    )
+      {
+        errors: {
+          auth: "Authentication failed. Please try again!",
+          username: null,
+          password: null,
+        },
+      },
+      { status: 400 },
+    );
   }
 
   return createUserSession({
@@ -60,7 +89,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     redirectTo,
     userId: user.id,
     accessToken: user.accessToken,
-    refreshToken: user.refreshToken
+    refreshToken: user.refreshToken,
   });
 };
 
@@ -100,15 +129,19 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-full flex-col justify-center bg-cover bg-center bg-no-repeat bg-[url('/images/login-background.svg')]">
       <div className="mx-auto w-full max-w-md px-8">
-
         <div className="text-center mb-10">
           <div className="w-16 h-16 mx-auto mb-4">
-            <img src="/images/brand-logo.svg" alt="My Beer Logo" draggable="false" />
+            <img
+              src="/images/brand-logo.svg"
+              alt="My Beer Logo"
+              draggable="false"
+            />
           </div>
 
-          <h1 className="text-2xl font-kanit font-semibold text-blackrose">My Beer Back Office</h1>
+          <h1 className="text-2xl font-kanit font-semibold text-blackrose">
+            My Beer Back Office
+          </h1>
         </div>
-
 
         <div className="bg-white p-8 rounded-2xl">
           <Form method="post" onSubmit={handleFormSubmit} className="space-y-6">
@@ -177,7 +210,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className={classNames(isLoading ? "opacity-50 cursor-not-allowed" : "", "w-full rounded bg-charged-blue px-4 py-2 font-kanit text-white font-medium hover:bg-cyan-600 focus:bg-cyan-500")}
+              className={classNames(
+                isLoading ? "opacity-50 cursor-not-allowed" : "",
+                "w-full rounded bg-charged-blue px-4 py-2 font-kanit text-white font-medium hover:bg-cyan-600 focus:bg-cyan-500",
+              )}
               disabled={isLoading}
             >
               {isLoading ? "Logging in..." : "Log in"}

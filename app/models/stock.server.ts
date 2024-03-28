@@ -1,14 +1,14 @@
 import config from "~/config";
 import { constructURL } from "~/utils";
 
-export interface FrontStoreMetadata {
+export interface StockMetadata {
   currentPage: number;
   perPage: number;
   totalPage: number;
   totalRow: number;
 }
 
-interface GetFrontStoreParams {
+interface GetStockParams {
   page: string | null | undefined;
   perPage: number | null | undefined;
   search: string | null | undefined;
@@ -16,36 +16,30 @@ interface GetFrontStoreParams {
   endAt: string | null | undefined;
 }
 
-export interface FrontStoreData {
-  order_id: string;
-  orderNumber: string;
-  phone: string;
-  email: string | null;
-  totalPrice: number;
-  point: number;
-  paymentStatus: string;
-  slipImageUrl: string;
-  manual_by: string;
-  updated_at?: string;
-  customer: {
-    picture: string;
-    name: string;
-  };
+export interface StockData {
+  id: number;
+  name: string;
+  variant: string;
+  price: number;
+  stock: number;
+  sold: number;
+  remain: number;
+  isDisplay: boolean;
 }
 
-export interface FrontStoreDataWithItemNo extends FrontStoreData {
-  itemNo: number;
+export interface StockDataWithItemNo extends StockData {
+  id: number;
 }
 
-export interface FrontStoreResponse extends FrontStoreMetadata {
-  data: FrontStoreData[];
+export interface StockResponse extends StockMetadata {
+  data: StockData[];
 }
 
-export async function getFrontStore(
+export async function getStock(
   accessToken: string,
-  params?: Partial<GetFrontStoreParams>,
-): Promise<FrontStoreResponse> {
-  const endpointURL = constructURL(config.api.baseUrl, `/orders/shop`);
+  params?: Partial<GetStockParams>,
+): Promise<StockResponse> {
+  const endpointURL = constructURL(config.api.baseUrl, `/products`);
 
   if (params?.page) {
     endpointURL.searchParams.set("page", String(params.page));
@@ -75,16 +69,16 @@ export async function getFrontStore(
     },
   });
 
-  const frontStore = await response.json();
+  const Stock = await response.json();
 
-  return frontStore as FrontStoreResponse;
+  return Stock as StockResponse;
 }
 
-export async function storefront(
+export async function getStockHistory(
   accessToken: string,
-  params?: Partial<GetFrontStoreParams>,
-): Promise<FrontStoreResponse> {
-  const endpointURL = constructURL(config.api.baseUrl, `/orders/shop`);
+  params?: Partial<GetStockParams>,
+): Promise<StockResponse> {
+  const endpointURL = constructURL(config.api.baseUrl, `/products/history`);
 
   if (params?.page) {
     endpointURL.searchParams.set("page", String(params.page));
@@ -114,7 +108,7 @@ export async function storefront(
     },
   });
 
-  const frontStore = await response.json();
+  const Stock = await response.json();
 
-  return frontStore as FrontStoreResponse;
+  return Stock as StockResponse;
 }
