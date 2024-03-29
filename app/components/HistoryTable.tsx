@@ -8,12 +8,10 @@ import {
 import PaginationNavigator from "./PaginationNavigator";
 import { classNames } from "~/tailwind";
 import Search from "./Search";
-import { Trades, TradesWithItemNo, TradeResponse } from "~/models/trade.server";
-import CustomDropdownStatus from "./CustomDropdownStatus";
-import DetailButton from "./DetailButton";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
-
-import Datepicker from "react-tailwindcss-datepicker";
+import {
+  HistoryStockDataWithItemNo,
+  HistoryStockResponse,
+} from "~/models/stock.server";
 import { Prettify } from "~/utils.type";
 import {
   Form,
@@ -23,26 +21,29 @@ import {
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
+import { useMemo } from "react";
 
-const columnHelper = createColumnHelper<TradeTableData["data"][number]>();
+const columnHelper = createColumnHelper<HistoryTableData["data"][number]>();
 
-export type TradeTableData = Prettify<
-  Omit<TradeResponse, "data"> & {
-    data: Omit<TradesWithItemNo, "order" | "trade">[];
+export type HistoryTableData = Prettify<
+  Omit<HistoryStockResponse, "data"> & {
+    data: HistoryStockDataWithItemNo[];
   }
 >;
 
-interface TradeTableProps {
-  data: TradeTableData;
+interface HistoryTableProps {
+  data: any;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  accessToken: string;
 }
 
 function HistoryTable({
   data,
   filter,
   setFilter,
-}: TradeTableProps): JSX.Element {
+  accessToken,
+}: HistoryTableProps): JSX.Element {
   let today = new Date();
   let sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
@@ -50,77 +51,61 @@ function HistoryTable({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const currentpage = +(searchParams.get("page") || "1");
-  const [value, setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
-
-  function handleValueChange(newValue: any) {
-    console.log("handleValueChange", newValue);
-    setValue(newValue);
-  }
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("itemNo", {
-        header: () => "No.",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("trade_id", {
+      columnHelper.accessor("imageUrls", {
         header: () => "ชื่อสินค้า",
-        cell: (info) => <p className="text-[#0047FF]">{info.getValue()}</p>,
+        cell: (info) => {
+          return (
+            <div className="flex">
+              <img
+                src={info.row.original.imageUrls}
+                className="w-[50px] h-[50px] mr-3"
+                alt=""
+              />
+              <p className="text-[#0047FF]">{info.row.original.name}</p>
+            </div>
+          );
+        },
       }),
 
-      columnHelper.accessor("customer.name", {
+      columnHelper.accessor("sku", {
         header: () => "Variants",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor(
-        (row) => ({
-          name: "kkk",
-          image: "",
-        }),
-        {
-          id: "merchandise_info",
-          header: () => "Display",
-          cell: (info) => (
-            <div className="flex gap-1 items-center">
-              <span>{info.getValue().name}</span>
-            </div>
-          ),
+
+      columnHelper.accessor("isDisplay", {
+        header: () => "Display",
+        cell: (info) => {
+          return (
+            <p className={info.getValue() ? "text-green-400" : "text-red-400"}>
+              {info.getValue() ? "Public" : "Unpublic"}
+            </p>
+          );
         },
-      ),
-      columnHelper.accessor("merchandise.point", {
-        header: () => "ราคา (บาท)",
+      }),
+      columnHelper.accessor("price", {
+        header: () => "ราคาต่อชิ้น",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("merchandise.point", {
+      columnHelper.accessor("type", {
         header: () => "Action",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("created_at", {
+
+      columnHelper.accessor("onHandNumber", {
         header: () => "จำนวน",
-        cell: (info) => {
-          const date = info.getValue();
-          return <span className="text-nowrap"></span>;
-        },
+        cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("created_at", {
+
+      columnHelper.accessor("availableNumber", {
         header: () => "จำนวนสต๊อก(ชิ้น)",
-        cell: (info) => {
-          const date = info.getValue();
-          return <span className="text-nowrap"></span>;
-        },
+        cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("created_at", {
-        header: () => "วันที่ทำรายการ",
-        cell: (info) => {
-          const date = info.getValue();
-          return <span className="text-nowrap"></span>;
-        },
-      }),
-      columnHelper.accessor("approve_status", {
-        header: () => "เพิ่ม Stock โดย",
+      columnHelper.accessor("admin_name", {
+        header: () => "เพิ่มโดย",
+        cell: (info) => info.getValue(),
       }),
     ],
     [data],
@@ -131,19 +116,17 @@ function HistoryTable({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
-
+  // console.log(thisHistoryId);
   return (
     <div className="w-full h-full flex flex-col">
-      <div
-        className={classNames(
-          data.totalRow > 0 ? "overflow-y-auto" : "",
-          "md:h-[12.25rem] lg:max-h-[31rem] flex-grow border-gray-400 bg-white",
-        )}
-      >
+      <div>
         <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
+                <th className="flex-grow flex-shrink-0 h-[2.75rem] px-2.5 py-1 bg-gray-200 border-t border-b border-gray-400 justify-start items-center gap-2.5 text-slate-500 text-base text-left font-light font-roboto">
+                  No.
+                </th>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
@@ -166,8 +149,15 @@ function HistoryTable({
 
           <tbody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, i) => (
                 <tr key={row.id}>
+                  <td
+                    className={classNames(
+                      "flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
+                    )}
+                  >
+                    {i + 1}
+                  </td>
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}

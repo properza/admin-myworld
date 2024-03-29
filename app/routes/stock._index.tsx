@@ -1,6 +1,11 @@
 import { Button } from "@material-ui/core";
 import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
-import { useLoaderData, useLocation, useSearchParams } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useSearchParams,
+} from "@remix-run/react";
 import { format } from "date-fns";
 import { useState, useMemo, useEffect } from "react";
 
@@ -41,12 +46,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ stock, accessToken });
 };
 
+
+
 export const meta: MetaFunction = () => [{ title: "My Beer | Stock" }];
 
 function StoreIndexPage(): JSX.Element {
   const location = useLocation();
   const [filter, setFilter] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
   const { stock, accessToken } = useLoaderData<typeof loader>();
 
   return (
@@ -57,12 +63,12 @@ function StoreIndexPage(): JSX.Element {
       pathname={location.pathname}
     >
       <div className="my-4 flex">
-        <a
-          href="/stock/history"
+        <Link
+          to={"/stock/history"}
           className="border-[1px] border-indigo-500/100 text-indigo-500 font-bold py-2 px-4 rounded mr-3"
         >
           History
-        </a>
+        </Link>
       </div>
 
       <StockTable

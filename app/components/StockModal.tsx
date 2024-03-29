@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loader } from "~/routes/_index";
 import { constructURL } from "~/utils";
 
 interface StockModalProps {
@@ -27,6 +29,8 @@ export default function StockModal({
   const [outstock, setOutStock] = useState<number>(0);
   const [inputValue, setInputValue] = useState(0);
   const [inClicked, setInClicked] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Function to handle stock update
   const handleStockUpdate = (add: boolean) => {
@@ -50,13 +54,11 @@ export default function StockModal({
   };
 
   const handleInStock = async () => {
-    const formData = new FormData();
-    inClicked
-      ? formData.append("value", instock.toString())
-      : formData.append("value", outstock.toString());
+    let value = inClicked ? instock.toString() : outstock.toString();
     let status = inClicked ? "in" : "out";
 
     try {
+      setIsLoading(true);
       const response = await fetch(
         constructURL(
           "https://games.myworld-store.com/api-dev",
@@ -65,13 +67,21 @@ export default function StockModal({
         {
           method: "PUT",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
-          body: formData,
+          body: JSON.stringify({ value }),
         },
       );
-
-      if (!response.ok) throw new Error("error has occured");
+      if (response.ok) {
+        await handleClose();
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+        navigate("/stock");
+      } else {
+        throw new Error("error has occured");
+      }
     } catch (e) {
       console.error(e);
     }
@@ -79,7 +89,7 @@ export default function StockModal({
 
   useEffect(() => {
     setStock(totalstock);
-  }, [totalstock, title, price]);
+  }, [totalstock]);
 
   if (!isOpen) {
     return null;
@@ -118,8 +128,10 @@ export default function StockModal({
               {stock} →{" "}
               <span className="text-sky-500">
                 {inClicked
-                  ? stock + (instock || 0)
-                  : outstock < stock
+                  ? instock > 0
+                    ? stock + (instock || 0)
+                    : 0
+                  : outstock > 0
                   ? stock - outstock
                   : 0}
               </span>
@@ -159,17 +171,15 @@ export default function StockModal({
           </div>
           <input
             type="number"
+            min="0"
             value={inClicked ? instock : outstock ?? 0}
             onChange={(e) => {
-              const value = Number(e.target.value);
-              inClicked ? setInStock(value) : setOutStock(value);
-              
-            }}
-            onKeyDown={(e) => {
-              // Prevent decimal point and negative sign
-              if (e.key === "." || e.key === "-") {
-                e.preventDefault();
+              let value = e.target.value;
+              if (value.startsWith("0") || value.startsWith("-")) {
+                return;
               }
+              let numValue = Number(value);
+              inClicked ? setInStock(numValue) : setOutStock(numValue);
             }}
             className="border-2 border-gray-300 p-2 rounded w-full text-end"
           />
@@ -181,8 +191,11 @@ export default function StockModal({
           >
             Cancel
           </button>
-          <button onClick={handleInStock} className="bg-sky-500 text-white px-4 py-2 rounded">
-            Save
+          <button
+            onClick={handleInStock}
+            className="bg-sky-500 text-white px-4 py-2 rounded"
+          >
+            {isLoading ? "Loading..." : "Save"}
           </button>
         </div>
       </div>

@@ -67,14 +67,8 @@ function StockTable({
   const [thisTitle, setthisTitle] = useState<string>();
   const [thisPrice, setthisPrice] = useState<number>();
 
-  function handleValueChange(newValue: any) {
-    console.log("handleValueChange", newValue);
-    setValue(newValue);
-  }
-
   const columns = useMemo(
     () => [
-     
       columnHelper.accessor("name", {
         header: () => "ชื่อสินค้า",
         cell: (info) => <p className="text-[#0047FF]">{info.getValue()}</p>,
@@ -93,19 +87,37 @@ function StockTable({
         ),
       }),
 
+      columnHelper.accessor("isDisplay", {
+        header: () => "Display",
+        cell: (info) => {
+          return (
+            <p className={info.getValue() ? "text-green-400" : "text-red-400"}>
+              {info.getValue() ? "Public" : "Unpublic"}
+            </p>
+          );
+        },
+      }),
+      // columnHelper.accessor("sold", {
+      //   header: () => "ราคาต่อชิ้น",
+      //   cell: (info) => {
+      //     const date = info.getValue();
+      //     return <span className="text-nowrap"></span>;
+      //   },
+      // }),
       columnHelper.accessor("stock", {
-        header: () => "Point",
+        header: () => "จำนวนสต๊อก(ชิ้น)",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("sold", {
-        header: () => "วันที่แลกซื้อ",
-        cell: (info) => {
-          const date = info.getValue();
-          return <span className="text-nowrap"></span>;
-        },
+        header: () => "ขายได้",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("remain", {
+        header: () => "คงเหลือ",
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("id", {
-        header: () => "ตรวจสอบ",
+        header: () => "อัปเดต",
         cell: (info) => {
           return (
             <div>
@@ -118,7 +130,7 @@ function StockTable({
                   setthisPrice(info.row.original.price);
                 }}
               >
-                Open Modal
+                <img src="/images/edit.svg" alt="" />
               </button>
             </div>
           );
@@ -155,6 +167,9 @@ function StockTable({
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
+                <th className="flex-grow flex-shrink-0 h-[2.75rem] px-2.5 py-1 bg-gray-200 border-t border-b border-gray-400 justify-start items-center gap-2.5 text-slate-500 text-base text-left font-light font-roboto">
+                  No.
+                </th>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
@@ -177,8 +192,15 @@ function StockTable({
 
           <tbody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row,i) => (
                 <tr key={row.id}>
+                    <td
+                    className={classNames(
+                      "flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
+                    )}
+                  >
+                    {i + 1}
+                  </td>
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}

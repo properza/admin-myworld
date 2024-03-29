@@ -8,20 +8,10 @@ import Layout from "~/components/Layout";
 import TradeListTable from "~/components/TradeListTable";
 import StockPopup from "~/components/StockModal";
 import {
-  // OrderDataWithItemNo,
-  // OrderMetadata,
-  getOrders,
-} from "~/models/order.server";
+  getStockHistory,
+} from "~/models/stock.server";
 import { getUserData, requireUserId } from "~/services/session.server";
-import StockTable from "~/components/StockTable";
 import HistoryTable from "~/components/HistoryTable";
-// import { convertUTC } from "~/utils";
-
-// interface DateType {
-//   startDate: Date | string;
-//   endDate: Date | string;
-// }
-
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUserId(request);
 
@@ -32,14 +22,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const filter = searchParams.get("filter");
   const startAt = searchParams.get("startAt");
   const endAt = searchParams.get("endAt");
-  const orders = await getOrders(accessToken, {
+  const orders = await getStockHistory(accessToken, {
     page,
     search: filter,
     startAt,
     endAt,
   });
 
-  return json({ orders });
+  return json({ orders, accessToken });
 };
 
 export const meta: MetaFunction = () => [{ title: "My Beer | History" }];
@@ -48,6 +38,8 @@ function StoreHistory(): JSX.Element {
   const location = useLocation();
   const [filter, setFilter] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const { orders, accessToken } = useLoaderData<typeof loader>();
+
 
   return (
     <Layout
@@ -62,10 +54,11 @@ function StoreHistory(): JSX.Element {
           perPage: 10,
           totalPage: 1,
           totalRow: 0,
-          data: [],
+          data: orders.data,
         }}
         filter={filter}
         setFilter={setFilter}
+        accessToken={accessToken}
       />
     </Layout>
   );

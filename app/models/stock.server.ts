@@ -73,11 +73,53 @@ export async function getStock(
 
   return Stock as StockResponse;
 }
+export interface HistoryStockData {
+  id: number; // Change this line
+  name: string;
+  code: string;
+  value: number;
+  admin_name: string;
+  type: string;
+  sku: Variant["sku"];
+  onHandNumber: Variant["onHandNumber"];
+  availableNumber: Variant["availableNumber"];
+  isDisplay: boolean;
+  price: number;
+  imageUrls: string;
+  variants: Variant[];
+}
+
+export interface HistoryStockDataWithItemNo extends HistoryStockData {
+  id: number;
+}
+
+interface Variant {
+  id: number;
+  sku: string;
+  price: number;
+  weight: number;
+  barcode: string;
+  options: any[];
+  inventoryId: number;
+  onHandNumber: number;
+  reservedNumber: number;
+  availableNumber: number;
+  discountedPrice: number | null;
+  readyToShipNumber: number;
+}
+
+export interface HistoryStockDataWithItemNo extends HistoryStockData {
+  id: number;
+}
+
+export interface HistoryStockResponse extends StockMetadata {
+  data: HistoryStockData[];
+}
 
 export async function getStockHistory(
   accessToken: string,
   params?: Partial<GetStockParams>,
-): Promise<StockResponse> {
+): Promise<HistoryStockResponse> {
   const endpointURL = constructURL(config.api.baseUrl, `/products/history`);
 
   if (params?.page) {
@@ -110,5 +152,5 @@ export async function getStockHistory(
 
   const Stock = await response.json();
 
-  return Stock as StockResponse;
+  return Stock as HistoryStockResponse;
 }
