@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { redirect } from "@remix-run/node"; // or cloudflare/deno
 import { loader } from "~/routes/_index";
 import { constructURL } from "~/utils";
 
@@ -77,7 +76,7 @@ export default function StockModal({
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-        redirect("/stock");
+        window.location.reload();
       } else {
         throw new Error("error has occured");
       }
