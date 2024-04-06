@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { loader } from "~/routes/_index";
 import { constructURL } from "~/utils";
-import config from "~/config";
 
 interface StockModalProps {
   title: string | undefined;
@@ -59,7 +58,10 @@ export default function StockModal({
     try {
       setIsLoading(true);
       const response = await fetch(
-        constructURL(config.api.baseUrl, `/products/${stock_id}/${status}`),
+        constructURL(
+          "https://games.myworld-store.com/api-dev",
+          `/products/${stock_id}/${status}`,
+        ),
         {
           method: "PUT",
           headers: {
