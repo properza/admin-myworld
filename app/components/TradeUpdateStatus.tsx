@@ -12,7 +12,7 @@ interface TradeUpdateStatusProps {
 const options = [
   {
     title: "รอดำเนินการ",
-    approve_status: "none",
+    approve_status: "pending",
     color: "#414141",
   },
   {
@@ -40,10 +40,7 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
 
     try {
       const response = await fetch(
-        constructURL(
-          "https://games.myworld-store.com/api-dev",
-          `/orders/storefront/${id}/status`,
-        ),
+        constructURL(config.api.baseUrl, `/orders/storefront/${id}/status`),
         {
           method: "PUT",
           headers: {
@@ -61,7 +58,7 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
 
   return (
     <>
-    <input name="id" value={id} hidden readOnly />
+      <input name="id" value={id} hidden readOnly />
       <select
         name="approve_status"
         value={selectedStatus} // This controls which option is selected
