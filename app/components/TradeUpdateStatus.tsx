@@ -58,10 +58,10 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
 
   return (
     <>
-      <input name="id" value={id} hidden />
+    <input name="id" value={id} hidden readOnly />
       <select
         name="approve_status"
-        value={selectedStatus}
+        value={selectedStatus} // This controls which option is selected
         onChange={handleChange}
         className="border-2 rounded p-1 text-xs"
         style={{
@@ -70,20 +70,8 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
         }}
       >
         {options.map((v, i) => (
-          <option
-            key={`${i}_${v.approve_status}`}
-            value={v.approve_status}
-            selected={v.approve_status === selectedStatus}
-          >
-            <span
-              style={{
-                color: `${
-                  v.approve_status === selectedStatus ? v.color : ""
-                } !imporant`,
-              }}
-            >
-              {v.title}
-            </span>
+          <option key={`${i}_${v.approve_status}`} value={v.approve_status}>
+            {v.title}
           </option>
         ))}
       </select>
