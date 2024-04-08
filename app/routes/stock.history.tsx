@@ -7,9 +7,7 @@ import { useState, useMemo, useEffect } from "react";
 import Layout from "~/components/Layout";
 import TradeListTable from "~/components/TradeListTable";
 import StockPopup from "~/components/StockModal";
-import {
-  getStockHistory,
-} from "~/models/stock.server";
+import { getStockHistory } from "~/models/stock.server";
 import { getUserData, requireUserId } from "~/services/session.server";
 import HistoryTable from "~/components/HistoryTable";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -41,11 +39,13 @@ function StoreHistory(): JSX.Element {
   const { orders, accessToken } = useLoaderData<typeof loader>();
 
 
+  
   return (
+
     <Layout
       title="History"
-      isSubRoute={false}
-      returnRoute=""
+      isSubRoute={true}
+      returnRoute={"/stock"}
       pathname={location.pathname}
     >
       <HistoryTable

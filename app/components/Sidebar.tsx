@@ -13,7 +13,7 @@ const generalNavigation: Navigation[] = [
     name: "Order",
     text: "รายการสั่งซื้อ",
     icon: "/images/product.svg",
-    href: "/orders",
+    href: "/orders?tab=Order",
   },
   {
     name: "Trade",

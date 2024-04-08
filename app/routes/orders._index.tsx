@@ -18,6 +18,11 @@ import {
   OrderMetadata,
   getOrders,
 } from "~/models/order.server";
+import {
+  getTradeList,
+  TradeListDataWithItemNo,
+  TradeListMetadata,
+} from "~/models/tradeList.server";
 import { getUserData, requireUserId } from "~/services/session.server";
 import { convertUTC } from "~/utils";
 
@@ -42,6 +47,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     startAt,
     endAt,
   });
+  
   const frontStore = await getFrontStore(accessToken, {
     page,
     search: filter,
@@ -49,7 +55,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     endAt,
   });
 
-  return json({ orders, frontStore, accessToken });
+  const tradeList = await getTradeList(accessToken, {
+    page,
+    search: filter,
+    startAt,
+    endAt,
+  });
+
+  return json({ orders, frontStore, tradeList, accessToken });
 };
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Order" }];
@@ -57,8 +70,12 @@ export const meta: MetaFunction = () => [{ title: "My Beer | Order" }];
 function OrderIndexPage(): JSX.Element {
   const location = useLocation();
 
-  const { orders, frontStore, accessToken } = useLoaderData<typeof loader>();
+  const { orders, frontStore, tradeList, accessToken } =
+    useLoaderData<typeof loader>();
   const [orderData, setOrderData] = useState<OrderDataWithItemNo[]>([]);
+  const [tradeListData, setTradeListDate] = useState<TradeListDataWithItemNo[]>(
+    [],
+  );
   const [frontStoreData, setFrontStoreDate] = useState<
     FrontStoreDataWithItemNo[]
   >([]);
@@ -77,6 +94,15 @@ function OrderIndexPage(): JSX.Element {
       totalPage: 1,
       totalRow: 0,
     });
+
+  const [TradeListMetadata, setTradeListMetadata] = useState<TradeListMetadata>(
+    {
+      currentPage: 1,
+      perPage: 0,
+      totalPage: 1,
+      totalRow: 0,
+    },
+  );
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
@@ -154,6 +180,34 @@ function OrderIndexPage(): JSX.Element {
   }, [frontStore, orders.currentPage, orders.perPage]);
 
   useMemo(() => {
+    if (tradeList && tradeList.data) {
+      setTradeListMetadata({
+        currentPage: tradeList.currentPage,
+        totalPage: tradeList.totalPage,
+        totalRow: tradeList.totalRow,
+        perPage: tradeList.perPage,
+      });
+
+      const data: TradeListDataWithItemNo[] = tradeList.data.map(
+        (order, index) => ({
+          ...order,
+          itemNo: (orders.currentPage - 1) * orders.perPage + index + 1,
+        }),
+      );
+
+      setTradeListDate(data);
+    } else {
+      setTradeListMetadata({
+        currentPage: 1,
+        totalPage: 1,
+        totalRow: 0,
+        perPage: 10,
+      });
+      setTradeListDate([]);
+    }
+  }, [tradeList, orders.currentPage, orders.perPage]);
+
+  useMemo(() => {
     if (orders && orders.data) {
       setOrderMetadata({
         currentPage: orders.currentPage,
@@ -203,12 +257,14 @@ function OrderIndexPage(): JSX.Element {
         }}
         tabs={[
           {
+            name: "Order",
             label: "รายการสั่งซื้อ",
             content: (
               <OrderTable data={{ ...orderMetadata, data: orderData }} />
             ),
           },
           {
+            name: "FrontStore",
             label: "จำหน่ายหน้าร้าน",
             content: (
               <FrontStore
@@ -217,11 +273,13 @@ function OrderIndexPage(): JSX.Element {
             ),
           },
           {
+            name: "Trade",
             label: "รายการซื้อMy Beer",
             content: (
               <TradeListTable
-                data={{ ...frontStoreMetadata, data: frontStoreData }}
+                data={{ ...TradeListMetadata, data: tradeListData }}
                 accessToken={accessToken}
+                
               />
             ),
           },

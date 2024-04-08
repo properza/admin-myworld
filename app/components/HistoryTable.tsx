@@ -96,12 +96,12 @@ function HistoryTable({
 
       columnHelper.accessor("onHandNumber", {
         header: () => "จำนวน",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.row.original.variants[0].onHandNumber,
       }),
 
       columnHelper.accessor("availableNumber", {
         header: () => "จำนวนสต๊อก(ชิ้น)",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.row.original.variants[0].availableNumber,
       }),
       columnHelper.accessor("admin_name", {
         header: () => "เพิ่มโดย",

@@ -8,7 +8,11 @@ import {
 import PaginationNavigator from "./PaginationNavigator";
 import { classNames } from "~/tailwind";
 import Search from "./Search";
-import { Trades, TradesWithItemNo, TradeResponse } from "~/models/trade.server";
+import {
+  TradeList,
+  TradeListWithItemNo,
+  TradeResponse,
+} from "~/models/tradeList.server";
 import CustomDropdownStatus from "./CustomDropdownStatus";
 import DetailButton from "./DetailButton";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
@@ -64,7 +68,7 @@ const shipmeentOptions = [
 
 export type TradeTableData = Prettify<
   Omit<TradeResponse, "data"> & {
-    data: Omit<TradesWithItemNo, "order" | "trade">[];
+    data: Omit<TradeListWithItemNo, "order" | "trade">[];
   }
 >;
 

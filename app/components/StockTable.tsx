@@ -156,6 +156,7 @@ function StockTable({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         accessToken={accessToken}
+
       />
       <div
         className={classNames(
@@ -192,9 +193,9 @@ function StockTable({
 
           <tbody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row,i) => (
+              table.getRowModel().rows.map((row, i) => (
                 <tr key={row.id}>
-                    <td
+                  <td
                     className={classNames(
                       "flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
                     )}

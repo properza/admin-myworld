@@ -16,108 +16,98 @@ import { constructURL } from "~/utils";
 import Datepicker from "react-tailwindcss-datepicker";
 import { Prettify } from "~/utils.type";
 import {
-  Form,
-  useActionData,
-  useNavigate,
-  useRevalidator,
-  useSearchParams,
-  useSubmit,
-} from "@remix-run/react";
+  TradeListDataWithItemNo,
+  TradeListResponse,
+} from "~/models/tradeList.server";
 import TradeUpdateStatus from "./TradeUpdateStatus";
+import SlipModal from "./SlipModal";
 
-const columnHelper = createColumnHelper<TradeTableData["data"][number]>();
-
-export type TradeTableData = Prettify<
-  Omit<TradeResponse, "data"> & {
-    data: Omit<TradesWithItemNo, "order" | "trade">[];
-  }
+interface TradeListProps {
+  data: TradeListData;
+  accessToken: string;
+}
+export type TradeListData = Prettify<
+  Omit<TradeListResponse, "data"> & { data: TradeListDataWithItemNo[] }
 >;
 
-interface TradeTableProps {
-  data: TradeTableData;
-  filter: string;
-  accessToken: string;
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
-}
-function TradeListTable({
-  data,
-  filter,
-  setFilter,
-  accessToken,
-}: TradeTableProps): JSX.Element {
-  let today = new Date();
-  let sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
-  const submit = useSubmit();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const currentpage = +(searchParams.get("page") || "1");
-  const [value, setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
+function TradeListTable({ data, accessToken }: TradeListProps): JSX.Element {
+  const columnHelper = createColumnHelper<TradeListData["data"][number]>();
+  const columns = [
+    columnHelper.accessor("itemNo", {
+      header: () => "No.",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("orderNumber", {
+      header: () => "หมายเลขออเดอร์",
+      cell: (info) => {
+        return <p className="text-[#0047FF]">{info.getValue()}</p>;
+      },
+    }),
+    columnHelper.accessor("customer.name", {
+      header: () => "ชื่อผู้ใช้",
+      cell: (info) => info.getValue() ?? "-",
+    }),
+    columnHelper.accessor("orderItems", {
+      header: () => "ชื่อสินค้า",
+      cell: (info) => {
+        const orderItems = info.getValue();
+        return orderItems.map((item: any) => item.name).join(", ");
+      },
+    }),
+    columnHelper.accessor("totalPrice", {
+      header: () => "ราคา (บาท)",
+      cell: (info) => info.getValue() ?? "-",
+    }),
 
-  function handleValueChange(newValue: any) {
-    // console.log("handleValueChange", newValue);
-    setValue(newValue);
-  }
+    columnHelper.accessor("slipImageUrl", {
+      header: () => "สลิป",
+      cell: (info) => (
+        <div className="flex justify-center">
+          <img
+            src={info.getValue()}
+            alt=""
+            width="20px"
+            height="20px"
+            className="cursor-pointer"
+          />
+        </div>
+      ),
+      size: 124,
+    }),
+    columnHelper.accessor("point", {
+      header: () => "Point",
+      cell: (info) => info.getValue() ?? "-",
+    }),
+    columnHelper.accessor("updated_at", {
+      header: () => "วันที่แลกซื้อ",
+      cell: (info) => {
+        const date = info.getValue();
+        return date;
+      },
+    }),
+    columnHelper.accessor("storefront_status", {
+      header: () => "ตรวจสอบ",
+      cell: (info) => {
+        return (
+          <TradeUpdateStatus
+            id={info.row.original.order_id}
+            approve_status={info.getValue()}
+            accessToken={accessToken}
+          />
+        )
+      },
+    }),
+  ];
 
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor("itemNo", {
-        header: () => "No.",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("orderNumber", {
-        header: () => "หมายเลขออเดอร์",
-        cell: (info) => {
-          return <p className="text-red-500">{info.getValue()}</p>;
-        },
-      }),
-      columnHelper.accessor("customer.name", {
-        header: () => "ชื่อผู้ใช้",
-        cell: (info) => info.getValue() ?? "-",
-      }),
-      columnHelper.accessor("merchandise.point", {
-        header: () => "ชื่อสินค้า",
-        cell: (info) => info.getValue() ?? "-",
-      }),
-      columnHelper.accessor("totalPrice", {
-        header: () => "ราคา (บาท)",
-        cell: (info) => info.getValue() ?? "-",
-      }),
-      columnHelper.accessor("point", {
-        header: () => "Point",
-        cell: (info) => info.getValue() ?? "-",
-      }),
-      columnHelper.accessor("updated_at", {
-        header: () => "วันที่แลกซื้อ",
-        cell: (info) => {
-          const date = info.getValue();
-          return date;
-        },
-      }),
-      columnHelper.accessor("approve_status", {
-        header: () => "ตรวจสอบ",
-        cell: (info) => {
-          return (
-            <TradeUpdateStatus
-              id={info.row.original.order_id}
-              approve_status={info.getValue()}
-              accessToken={accessToken}
-            />
-          );
-        },
-      }),
-    ],
-    [data],
-  );
   const table = useReactTable({
-    data: data && Array.isArray(data.data) ? data.data : [],
+    data: data.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const [isOpenSlip, setIsOpenSlip] = useState<boolean>(false);
+  const [selectedSlip, setSelectedSlip] = useState<string>("");
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -160,6 +150,12 @@ function TradeListTable({
                     className={classNames(
                       "flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
                     )}
+                    onClick={() => {
+                      if (cell.column.id === "slipImageUrl") {
+                        setIsOpenSlip(true);
+                        setSelectedSlip(cell.getValue() as string);
+                      }
+                    }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -171,22 +167,24 @@ function TradeListTable({
         {/* Empty State Here */}
       </div>
 
-      {/* footer */}
-
       <div className="flex justify-between items-center gap-2 mt-2 mb-16">
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {currentpage} of {data.totalPage}
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
           </strong>
         </span>
 
         <PaginationNavigator
-          currentPage={currentpage}
-          totalPage={data.totalPage}
-          setPageIndex={(e) => {
-            navigate(`/trades?page=${e + 1}`, { replace: true });
-          }}
+          currentPage={table.getState().pagination.pageIndex + 1}
+          totalPage={table.getPageCount()}
+          setPageIndex={table.setPageIndex}
+        />
+        <SlipModal
+          isOpen={isOpenSlip}
+          closeModal={setIsOpenSlip}
+          slip={selectedSlip}
         />
       </div>
     </div>
