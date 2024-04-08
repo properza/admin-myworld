@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
-
+import { useSearchParams } from "@remix-run/react";
 import Search from "./Search";
 
 interface TabItem {
+  name: string;
   label: string;
   content?: React.ReactNode;
 }
@@ -34,9 +35,10 @@ const TabsComponent: React.FC<TabsProps> = ({
   dateValue,
   onChangeDate,
 }) => {
-  const [currentTabs, setCurrentTabs] = useState(0);
-  const handleTabClick = (index: number) => {
-    setCurrentTabs(index);
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get("tab");
+  const handleTabClick = (name: string, index: number) => {
+    window.location.href = "orders?tab=" + name;
     onChange?.(index);
   };
 
@@ -47,9 +49,9 @@ const TabsComponent: React.FC<TabsProps> = ({
           {tabs.map((tab, index) => (
             <li key={index} className="me-2">
               <div
-                onClick={() => handleTabClick(index)}
+                onClick={() => handleTabClick(tab.name, index)}
                 className={`inline-block p-2 border-b-2 border-[#28B7E1] rounded-t-lg cursor-pointer ${
-                  index === currentTabs ? "text-[#28B7E1]" : "border-none"
+                  tab.name === currentTab ? "text-[#28B7E1]" : "border-none"
                 } text-base`}
               >
                 {tab.label}
@@ -77,7 +79,7 @@ const TabsComponent: React.FC<TabsProps> = ({
           <div
             key={index}
             className={`${
-              index === currentTabs ? "" : "hidden"
+              tab.name === currentTab ? "" : "hidden"
             } px-2 py-4 rounded-lg bg-gray-50 h-full`}
             role="tabpanel"
             aria-labelledby={`${tab.label}-tab`}

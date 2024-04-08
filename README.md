@@ -36,3 +36,5 @@ Since the project is using Node.js 20.10.0. You should be using `nvm` (Node vers
   ```
 
 This starts your app in development mode, rebuilding assets on file changes.
+
+# mybeer-admin

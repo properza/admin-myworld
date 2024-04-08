@@ -29,23 +29,22 @@ import StockTable from "~/components/StockTable";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUserId(request);
 
-  const { accessToken } = await getUserData(request);
+  var { accessToken } = await getUserData(request);
   const { searchParams } = new URL(request.url);
 
   const page = searchParams.get("page");
   const filter = searchParams.get("filter");
   const startAt = searchParams.get("startAt");
   const endAt = searchParams.get("endAt");
+ 
   const stock = await getStock(accessToken, {
     page,
     search: filter,
     startAt,
     endAt,
   });
-
   return json({ stock, accessToken });
 };
-
 
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Stock" }];
@@ -66,10 +65,12 @@ function StoreIndexPage(): JSX.Element {
         <Link
           to={"/stock/history"}
           className="border-[1px] border-indigo-500/100 text-indigo-500 font-bold py-2 px-4 rounded mr-3"
+          reloadDocument
         >
           History
         </Link>
       </div>
+
 
       <StockTable
         data={{

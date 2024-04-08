@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import config from "~/config";
 import { loader } from "~/routes/_index";
 import { constructURL } from "~/utils";
 
@@ -31,7 +29,6 @@ export default function StockModal({
   const [inputValue, setInputValue] = useState(0);
   const [inClicked, setInClicked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   // Function to handle stock update
   const handleStockUpdate = (add: boolean) => {
@@ -61,7 +58,10 @@ export default function StockModal({
     try {
       setIsLoading(true);
       const response = await fetch(
-        constructURL(config.api.baseUrl, `/products/${stock_id}/${status}`),
+        constructURL(
+          "https://games.myworld-store.com/api-dev",
+          `/products/${stock_id}/${status}`,
+        ),
         {
           method: "PUT",
           headers: {
@@ -76,7 +76,7 @@ export default function StockModal({
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-        navigate("/stock");
+        window.location.reload();
       } else {
         throw new Error("error has occured");
       }
