@@ -42,7 +42,7 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
     try {
       const response = await fetch(
         constructURL(
-          "https://games.myworld-store.com/api-dev",
+          "https://games.myworld-store.com/api",
           `/orders/storefront/${id}/status`,
         ),
         {
