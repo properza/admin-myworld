@@ -74,7 +74,17 @@ function HistoryTable({
         header: () => "Variants",
         cell: (info) => info.getValue(),
       }),
-
+      
+      // columnHelper.accessor("isDisplay", {
+      //   header: () => "Display",
+      //   cell: (info) => {
+      //     return (
+      //       <p className={info.getValue() ? "text-green-400" : "text-red-400"}>
+      //         {info.getValue() ? "Public" : "Unpublic"}
+      //       </p>
+      //     );
+      //   },
+      // }),
      
       columnHelper.accessor("price", {
         header: () => "ราคาต่อชิ้น",

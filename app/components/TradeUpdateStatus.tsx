@@ -57,6 +57,7 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
       );
 
       if (response.ok) {
+        
         window.location.href = "orders?tab=Trade";
       } else {
         throw new Error("Error has occurred");
