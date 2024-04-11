@@ -76,7 +76,7 @@ export default function StockModal({
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-        // window.location.reload();
+        window.location.reload();
       } else {
         throw new Error("error has occured");
       }
