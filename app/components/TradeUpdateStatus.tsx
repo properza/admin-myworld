@@ -43,7 +43,7 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
     try {
       const response = await fetch(
         constructURL(
-          "https://games.myworld-store.com/api-dev",
+          "https://games.myworld-store.com/api",
           `/orders/storefront/${id}/status`,
         ),
         {
@@ -57,7 +57,6 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
       );
 
       if (response.ok) {
-        
         window.location.href = "orders?tab=Trade";
       } else {
         throw new Error("Error has occurred");

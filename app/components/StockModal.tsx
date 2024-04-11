@@ -59,7 +59,7 @@ export default function StockModal({
       setIsLoading(true);
       const response = await fetch(
         constructURL(
-          "https://games.myworld-store.com/api-dev",
+          "https://games.myworld-store.com/api",
           `/products/${stock_id}/${status}`,
         ),
         {
