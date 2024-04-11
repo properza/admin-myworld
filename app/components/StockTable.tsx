@@ -79,9 +79,9 @@ function StockTable({
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("price", {
-        header: () => "ชื่อสินค้า",
+        header: () => "ราคา",
         cell: (info) => (
-          <div className="flex gap-1 items-center">
+          <div className="text-center">
             <span>{info.getValue()}</span>
           </div>
         ),
@@ -106,11 +106,19 @@ function StockTable({
       // }),
       columnHelper.accessor("stock", {
         header: () => "จำนวนสต๊อก(ชิ้น)",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="text-end">
+            <span>{info.getValue()}</span>
+          </div>
+        ),
       }),
       columnHelper.accessor("sold", {
         header: () => "ขายได้",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="text-end">
+            <span>{info.getValue()}</span>
+          </div>
+        ),
       }),
       columnHelper.accessor("remain", {
         header: () => "คงเหลือ",
@@ -120,7 +128,7 @@ function StockTable({
         header: () => "อัปเดต",
         cell: (info) => {
           return (
-            <div>
+            <div className="text-center">
               <button
                 onClick={() => {
                   setIsOpen(true);
@@ -156,7 +164,6 @@ function StockTable({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         accessToken={accessToken}
-
       />
       <div
         className={classNames(

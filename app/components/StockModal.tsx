@@ -52,14 +52,14 @@ export default function StockModal({
   };
 
   const handleInStock = async () => {
-    let value = inClicked ? instock.toString() : outstock.toString();
+    let value = inClicked ? instock: outstock;
     let status = inClicked ? "in" : "out";
 
     try {
       setIsLoading(true);
       const response = await fetch(
         constructURL(
-          "https://games.myworld-store.com/api",
+          "https://games.myworld-store.com/api-dev",
           `/products/${stock_id}/${status}`,
         ),
         {
@@ -76,7 +76,7 @@ export default function StockModal({
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-        window.location.reload();
+        // window.location.reload();
       } else {
         throw new Error("error has occured");
       }

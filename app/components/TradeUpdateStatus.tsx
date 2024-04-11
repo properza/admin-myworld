@@ -17,7 +17,7 @@ const options = [
   },
   {
     title: "ตรวจสอบแล้ว",
-    approve_status: "complete",
+    approve_status: "confirm",
     color: "#1AA127",
   },
   {
@@ -39,10 +39,11 @@ const TradeUpdateStatus: React.FC<TradeUpdateStatusProps> = ({
       storefront_status: e.target.value,
     });
 
+    console.log(accessToken)
     try {
       const response = await fetch(
         constructURL(
-          "https://games.myworld-store.com/api",
+          "https://games.myworld-store.com/api-dev",
           `/orders/storefront/${id}/status`,
         ),
         {

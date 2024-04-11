@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const UsernameSection = ({
   name,
   imageUrl,
@@ -5,12 +7,20 @@ const UsernameSection = ({
   name: string;
   imageUrl?: string | null | undefined;
 }): JSX.Element => {
+  
+  const [imgSrc, setImgSrc] = useState(imageUrl || "/images/avatar.svg");
+
+  const handleError = () => {
+    setImgSrc("/images/avatar.svg"); // replace with your local icon path
+  };
+
   return (
     <div className="flex">
       <div className="mr-3 justify-start items-center gap-2.5 flex">
         <img
           className="w-7 h-7 rounded-full border border-gray-400"
-          src={imageUrl ? imageUrl : "/images/avatar.svg"}
+          src={imgSrc}
+          onError={handleError}
           alt={name ? name : "Avatar"}
           draggable="false"
         />

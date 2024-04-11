@@ -75,16 +75,7 @@ function HistoryTable({
         cell: (info) => info.getValue(),
       }),
 
-      columnHelper.accessor("isDisplay", {
-        header: () => "Display",
-        cell: (info) => {
-          return (
-            <p className={info.getValue() ? "text-green-400" : "text-red-400"}>
-              {info.getValue() ? "Public" : "Unpublic"}
-            </p>
-          );
-        },
-      }),
+     
       columnHelper.accessor("price", {
         header: () => "ราคาต่อชิ้น",
         cell: (info) => info.getValue(),
@@ -94,14 +85,14 @@ function HistoryTable({
         cell: (info) => info.getValue(),
       }),
 
-      columnHelper.accessor("onHandNumber", {
+      columnHelper.accessor("value", {
         header: () => "จำนวน",
-        cell: (info) => info.row.original.variants[0].onHandNumber,
+        cell: (info) => new Intl.NumberFormat().format(info.getValue()),
       }),
 
-      columnHelper.accessor("availableNumber", {
+      columnHelper.accessor("stock", {
         header: () => "จำนวนสต๊อก(ชิ้น)",
-        cell: (info) => info.row.original.variants[0].availableNumber,
+        cell: (info) => new Intl.NumberFormat().format(info.getValue()),
       }),
       columnHelper.accessor("admin_name", {
         header: () => "เพิ่มโดย",

@@ -83,6 +83,7 @@ export interface HistoryStockData {
   sku: Variant["sku"];
   onHandNumber: Variant["onHandNumber"];
   availableNumber: Variant["availableNumber"];
+  stock: number;
   isDisplay: boolean;
   price: number;
   imageUrls: string;
