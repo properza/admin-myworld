@@ -15,6 +15,8 @@ import {
   // OrderDataWithItemNo,
   // OrderMetadata,
   getStock,
+  StockDataWithItemNo,
+  StockMetadata,
 } from "~/models/stock.server";
 import { getUserData, requireUserId } from "~/services/session.server";
 import StockTable from "~/components/StockTable";
@@ -36,7 +38,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const filter = searchParams.get("filter");
   const startAt = searchParams.get("startAt");
   const endAt = searchParams.get("endAt");
- 
+
   const stock = await getStock(accessToken, {
     page,
     search: filter,
@@ -46,13 +48,35 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ stock, accessToken });
 };
 
-
 export const meta: MetaFunction = () => [{ title: "My Beer | Stock" }];
 
 function StoreIndexPage(): JSX.Element {
   const location = useLocation();
-  const [filter, setFilter] = useState("");
   const { stock, accessToken } = useLoaderData<typeof loader>();
+
+  const [stockData, setstockData] = useState<StockDataWithItemNo[]>([]);
+  const [stockMetadata, setstockMetadata] = useState<StockMetadata>({
+    currentPage: 1,
+    perPage: 0,
+    totalPage: 1,
+    totalRow: 0,
+  });
+
+  useMemo(() => {
+    if (stock && stock.data) {
+      setstockMetadata({
+        currentPage: stock.currentPage,
+        totalPage: stock.totalPage,
+        totalRow: stock.totalRow,
+        perPage: stock.perPage,
+      });
+      const data: StockDataWithItemNo[] = stock.data.map((order, index) => ({
+        ...order,
+        itemNo: (stock.currentPage - 1) * stock.perPage + index + 1,
+      }));
+      setstockData(data);
+    }
+  }, [stock]);
 
   return (
     <Layout
@@ -71,17 +95,8 @@ function StoreIndexPage(): JSX.Element {
         </Link>
       </div>
 
-
       <StockTable
-        data={{
-          currentPage: 1,
-          perPage: 10,
-          totalPage: 1,
-          totalRow: 0,
-          data: stock.data,
-        }}
-        filter={filter}
-        setFilter={setFilter}
+        data={{ ...stockMetadata, data: stockData }}
         accessToken={accessToken}
       />
     </Layout>

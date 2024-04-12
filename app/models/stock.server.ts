@@ -8,6 +8,15 @@ export interface StockMetadata {
   totalRow: number;
 }
 
+
+export interface HistoryMetadata {
+  currentPage: number;
+  perPage: number;
+  totalPage: number;
+  totalRow: number;
+}
+
+
 interface GetStockParams {
   page: string | null | undefined;
   perPage: number | null | undefined;
@@ -28,7 +37,7 @@ export interface StockData {
 }
 
 export interface StockDataWithItemNo extends StockData {
-  id: number;
+  itemNo: number;
 }
 
 export interface StockResponse extends StockMetadata {
@@ -73,6 +82,8 @@ export async function getStock(
 
   return Stock as StockResponse;
 }
+
+
 export interface HistoryStockData {
   id: number; // Change this line
   name: string;
@@ -91,7 +102,7 @@ export interface HistoryStockData {
 }
 
 export interface HistoryStockDataWithItemNo extends HistoryStockData {
-  id: number;
+  itemNo: number;
 }
 
 interface Variant {
@@ -113,9 +124,11 @@ export interface HistoryStockDataWithItemNo extends HistoryStockData {
   id: number;
 }
 
-export interface HistoryStockResponse extends StockMetadata {
+export interface HistoryStockResponse extends HistoryMetadata {
   data: HistoryStockData[];
 }
+
+
 
 export async function getStockHistory(
   accessToken: string,
@@ -151,7 +164,7 @@ export async function getStockHistory(
     },
   });
 
-  const Stock = await response.json();
+  const HistoryStock = await response.json();
 
-  return Stock as HistoryStockResponse;
+  return HistoryStock as HistoryStockResponse;
 }

@@ -29,8 +29,6 @@ import {
 } from "@remix-run/react";
 import StockModal from "./StockModal";
 
-const columnHelper = createColumnHelper<StockTableData["data"][number]>();
-
 export type StockTableData = Prettify<
   Omit<StockResponse, "data"> & {
     data: StockDataWithItemNo[]; // Don't omit "id" here
@@ -39,28 +37,11 @@ export type StockTableData = Prettify<
 
 interface StockTableProps {
   data: StockTableData;
-  filter: string;
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
   accessToken: string;
 }
 
-function StockTable({
-  data,
-  filter,
-  setFilter,
-  accessToken,
-}: StockTableProps): JSX.Element {
-  let today = new Date();
-  let sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
-  const submit = useSubmit();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const currentpage = +(searchParams.get("page") || "1");
-  const [value, setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
+function StockTable({ data, accessToken }: StockTableProps): JSX.Element {
+  const columnHelper = createColumnHelper<StockTableData["data"][number]>();
   const [isOpen, setIsOpen] = useState(false);
   const [thisStockId, setthisStockId] = useState<number>();
   const [thisStock, setthisStock] = useState<number>();
@@ -69,6 +50,11 @@ function StockTable({
 
   const columns = useMemo(
     () => [
+      columnHelper.accessor("itemNo", {
+        header: () => "No.",
+        cell: (info) => info.getValue(),
+        size: 56,
+      }),
       columnHelper.accessor("name", {
         header: () => "ชื่อสินค้า",
         cell: (info) => <p className="text-[#0047FF]">{info.getValue()}</p>,
@@ -175,9 +161,6 @@ function StockTable({
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                <th className="flex-grow flex-shrink-0 h-[2.75rem] px-2.5 py-1 bg-gray-200 border-t border-b border-gray-400 justify-start items-center gap-2.5 text-slate-500 text-base text-left font-light font-roboto">
-                  No.
-                </th>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
@@ -200,15 +183,8 @@ function StockTable({
 
           <tbody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row, i) => (
+              table.getRowModel().rows.map((row) => (
                 <tr key={row.id}>
-                  <td
-                    className={classNames(
-                      "flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-start gap-2.5 text-stone-800 text-sm font-normal font-roboto",
-                    )}
-                  >
-                    {i + 1}
-                  </td>
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
@@ -242,16 +218,15 @@ function StockTable({
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {currentpage} of {data.totalPage}
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
           </strong>
         </span>
 
         <PaginationNavigator
-          currentPage={currentpage}
-          totalPage={data.totalPage}
-          setPageIndex={(e: any) => {
-            navigate(`/stock?page=${e + 1}`, { replace: true });
-          }}
+          currentPage={table.getState().pagination.pageIndex + 1}
+          totalPage={table.getPageCount()}
+          setPageIndex={table.setPageIndex}
         />
       </div>
     </div>
