@@ -8,14 +8,12 @@ export interface StockMetadata {
   totalRow: number;
 }
 
-
 export interface HistoryMetadata {
   currentPage: number;
   perPage: number;
   totalPage: number;
   totalRow: number;
 }
-
 
 interface GetStockParams {
   page: string | null | undefined;
@@ -34,6 +32,7 @@ export interface StockData {
   sold: number;
   remain: number;
   isDisplay: boolean;
+  imageUrls: string;
 }
 
 export interface StockDataWithItemNo extends StockData {
@@ -83,7 +82,6 @@ export async function getStock(
   return Stock as StockResponse;
 }
 
-
 export interface HistoryStockData {
   id: number; // Change this line
   name: string;
@@ -127,8 +125,6 @@ export interface HistoryStockDataWithItemNo extends HistoryStockData {
 export interface HistoryStockResponse extends HistoryMetadata {
   data: HistoryStockData[];
 }
-
-
 
 export async function getStockHistory(
   accessToken: string,

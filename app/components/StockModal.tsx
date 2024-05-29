@@ -5,6 +5,7 @@ import { constructURL } from "~/utils";
 interface StockModalProps {
   title: string | undefined;
   price: number | undefined;
+  imageUrls: string | undefined;
   stock_id: number | undefined;
   totalstock: number;
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface StockModalProps {
 export default function StockModal({
   title,
   price,
+  imageUrls,
   stock_id,
   totalstock,
   isOpen,
@@ -52,7 +54,7 @@ export default function StockModal({
   };
 
   const handleInStock = async () => {
-    let value = inClicked ? instock: outstock;
+    let value = inClicked ? instock : outstock;
     let status = inClicked ? "in" : "out";
 
     try {
@@ -107,7 +109,7 @@ export default function StockModal({
         </div>
         <div className="mb-4 flex">
           <div className="mr-3 p-0">
-            <img src="/images/product_mockup.svg" alt="" />
+            <img src={imageUrls} className="w-[90px]" />
           </div>
           <div>
             <p>{title}</p>

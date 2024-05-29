@@ -47,7 +47,10 @@ function StockTable({ data, accessToken }: StockTableProps): JSX.Element {
   const [thisStock, setthisStock] = useState<number>();
   const [thisTitle, setthisTitle] = useState<string>();
   const [thisPrice, setthisPrice] = useState<number>();
+  const [thisImageUrls, setthisImageUrls] = useState<string>();
 
+
+  
   const columns = useMemo(
     () => [
       columnHelper.accessor("itemNo", {
@@ -122,6 +125,7 @@ function StockTable({ data, accessToken }: StockTableProps): JSX.Element {
                   setthisStock(info.row.original.stock ?? 0);
                   setthisTitle(info.row.original.name);
                   setthisPrice(info.row.original.price);
+                  setthisImageUrls(info.row.original.imageUrls)
                 }}
               >
                 <img src="/images/edit.svg" alt="" />
@@ -145,6 +149,7 @@ function StockTable({ data, accessToken }: StockTableProps): JSX.Element {
       <StockModal
         title={thisTitle}
         price={thisPrice}
+        imageUrls={thisImageUrls}
         stock_id={thisStockId}
         totalstock={thisStock ?? 0}
         isOpen={isOpen}
