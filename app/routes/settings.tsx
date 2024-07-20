@@ -1,16 +1,177 @@
 import { MetaFunction } from "@remix-run/node";
-import { useLocation } from "@remix-run/react";
-import { useState } from "react";
+import { useLoaderData,useLocation } from "@remix-run/react";
+import { useEffect,useState } from "react";
 import GameSettingModal from "~/components/GameSettingModal";
-
+import axios from "axios";
 import Layout from "~/components/Layout";
-
+import { getUserData,requireUserId } from "~/services/session.server";
+import { ActionFunctionArgs,LoaderFunctionArgs } from "react-router";
+import { getUsers } from "~/models/user.server";
+// Meta function for setting page title
 export const meta: MetaFunction = () => [{ title: "My Beer | Settings" }];
 
+// Loader function to fetch the accessToken
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await requireUserId(request);
+
+  const { accessToken } = await getUserData(request);
+  return { accessToken };
+};
+
 export default function Settings(): JSX.Element {
+  const { accessToken } = useLoaderData<typeof loader>();
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [setToggle, SetToggle] = useState(false);
+  const [isOpen,setIsOpen] = useState(false);
+  const [setToggle,SetToggle] = useState(false);
+  const [isDisabled,setIsDisabled] = useState(true);
+  const [dailyLoginPoints,setDailyLoginPoints] = useState(0);
+  const [shareGamePoints,setShareGamePoints] = useState(0);
+  const [shareGameTime,setShareGameTime] = useState(0);
+  const [shareGamePer,setShareGamePer] = useState("");
+  const [upLevelPoints,setUpLevelPoints] = useState(0);
+  const [threeStarPoints,setThreeStarPoints] = useState(0);
+  const [twoStarPoints,setTwoStarPoints] = useState(0);
+  const [oneStarPoints,setOneStarPoints] = useState(0);
+  const [gameStatus,setGameStatus] = useState("");
+  const [openedDate,setOpenedDate] = useState("");
+  const [closedDate,setClosedDate] = useState("");
+
+
+  const today = new Date().toISOString().split('T')[0]
+  const baseUrl = "https://games.myworld-store.com/api"; // Ensure this is set in your environment variables
+
+  const getData = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/games/gameSetting`,{
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = response.data;
+      console.log(data);
+      setDailyLoginPoints(data.daily_login_point);
+      setShareGamePoints(data.share_social_point);
+      setShareGameTime(data.share_social_policy.times);
+      setShareGamePer(data.share_social_policy.per);
+      setUpLevelPoints(data.level_up_point);
+      setThreeStarPoints(data.stage_point.three);
+      setTwoStarPoints(data.stage_point.two);
+      setOneStarPoints(data.stage_point.one);
+      setOneStarPoints(data.stage_point.one);
+      setGameStatus(data.game_status);
+      setOpenedDate(data.opened_date);
+      setClosedDate(data.closed_date);
+    } catch (error) {
+      console.error("Error fetching data:",error);
+    }
+  };
+
+  const setDefault = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/games/gameSetting`,{
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = response.data;
+      setDailyLoginPoints(data.daily_login_point);
+      setShareGamePoints(data.share_social_point);
+      setShareGameTime(data.share_social_policy.times);
+      setShareGamePer(data.share_social_policy.per);
+      setUpLevelPoints(data.level_up_point);
+      setThreeStarPoints(data.stage_point.three);
+      setTwoStarPoints(data.stage_point.two);
+      setOneStarPoints(data.stage_point.one);
+      setOneStarPoints(data.stage_point.one);
+      setGameStatus(data.game_status);
+      setOpenedDate(data.opened_date);
+      setClosedDate(data.closed_date);
+    } catch (error) {
+      console.error("Error fetching data:",error);
+    }
+  };
+
+  const updateStatus = async () => {
+    const data = {
+      daily_login_point: dailyLoginPoints,
+      share_social_point: shareGamePoints,
+      share_social_policy: {
+        times: shareGameTime,
+        per: shareGamePer, // ["day", "week", "month"]
+      },
+      level_up_point: upLevelPoints,
+      stage_point: {
+        one: oneStarPoints,
+        two: twoStarPoints,
+        three: threeStarPoints,
+      },
+    };
+
+    try {
+      const response = await axios.put(`${baseUrl}/games/gameSetting`,data,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setIsDisabled(true);
+      SetToggle(false)
+
+      console.log("Update successful:",response.data);
+    } catch (error) {
+      console.error("Failed to update status:",error);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (dateString !== "") {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2,"0");
+      const day = String(date.getDate()).padStart(2,"0");
+      return `${year}-${month}-${day}`;
+    } else {
+      return ""
+    }
+  };
+
+
+
+  const updateGameStatus = async () => {
+    const data = {
+      game_status: gameStatus,
+      opened_date: openedDate !== '' ? formatDate(openedDate) : today,
+      closed_date: closedDate !== '' ? formatDate(closedDate) : today,
+    };
+    try {
+      const response = await axios.put(`${baseUrl}/games/gameStatus`,data,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setIsOpen(false);
+      console.log("Update successful:",response.data);
+    } catch (error) {
+      console.error("Failed to update status:",error);
+    }
+  };
+
+
+  const setUndisabled = () => {
+    SetToggle(true)
+    setIsDisabled(!isDisabled);
+  }
+
+
+  const setDisabled = () => {
+    SetToggle(false)
+    setIsDisabled(true);
+  }
+
+  useEffect(() => {
+    getData();
+  },[accessToken]);
 
   return (
     <Layout
@@ -19,14 +180,34 @@ export default function Settings(): JSX.Element {
       isSubRoute={false}
       returnRoute=""
     >
-      <GameSettingModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <GameSettingModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        setGameStatus={setGameStatus}
+        setOpenedDate={setOpenedDate}
+        setClosedDate={setClosedDate}
+        updateGameStatus={updateGameStatus}
+        gameStatus={gameStatus}
+        openedDate={openedDate}
+        closedDate={closedDate}
+      />
       <div className="bg-white  p-[20px] rounded-[3px]">
         <div className="flex justify-between">
           <div className="flex">
-            <p className="mr-4">Game active</p>
-            <div className="flex rounded-[50px] bg-green-300 px-2 py-1 my-auto  ">
-              <span className="rounded-full bg-green-500 w-[10px] h-[10px] my-auto mr-2"></span>
-              <span className="text-[10px]">Online</span>
+            <p className="mr-4">
+              Game {gameStatus === "available" ? "active" : "unactive"}
+            </p>
+            <div
+              className={`flex rounded-[50px] ${gameStatus === "available" ? "bg-green-300 " : "bg-red-300"
+                } px-2 py-1 my-auto`}
+            >
+              <span
+                className={`rounded-full  ${gameStatus === "available" ? "bg-green-500" : "bg-red-500"
+                  } w-[10px] h-[10px] my-auto mr-2`}
+              ></span>
+              <span className="text-[10px]">
+                {gameStatus === "available" ? "Online" : "Offline"}
+              </span>
             </div>
           </div>
           <button
@@ -46,7 +227,7 @@ export default function Settings(): JSX.Element {
       </div>
       <div className={!setToggle ? "flex justify-end" : "hidden"}>
         <button
-          onClick={() => SetToggle(true)}
+          onClick={() => setUndisabled()}
           className="bg-[#28B7E1] text-white flex p-2 rounded-[8px] border-[1px] w-auto mt-4  px-[20px]  my-auto"
         >
           <img src="images/tabler_edit.svg" alt="" />
@@ -54,17 +235,22 @@ export default function Settings(): JSX.Element {
         </button>
       </div>
       <div className={setToggle ? "flex justify-end" : "hidden"}>
-        <button className="bg-black text-white p-2 rounded-[8px] border-[1px] w-auto mt-4 mr-3 px-[40px]  my-auto">
+        <button
+          onClick={setDefault}
+          className="bg-black text-white p-2 rounded-[8px] border-[1px] w-auto mt-4 mr-3 px-[40px]  my-auto"
+        >
           Set as Default
         </button>
         <button
-          onClick={() => SetToggle(false)}
-          
+          onClick={() => setDisabled()}
           className=" bg-white-500 text-black border-black border-[1px]  p-2 rounded-[8px] my-auto w-auto mt-4 mr-3 px-[40px] "
         >
           Discard
         </button>
-        <button className="bg-[#28B7E1] text-white p-2 rounded-[8px] border-[1px] w-auto mt-4  px-[40px]  my-auto">
+        <button
+          onClick={updateStatus}
+          className="bg-[#28B7E1] text-white p-2 rounded-[8px] border-[1px] w-auto mt-4  px-[40px]  my-auto"
+        >
           Save
         </button>
       </div>
@@ -82,7 +268,11 @@ export default function Settings(): JSX.Element {
               <input
                 type="text"
                 className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-                value="10"
+                onChange={(e) =>
+                  setDailyLoginPoints(Number(e.target.value) || 0)}
+
+                value={dailyLoginPoints}
+                disabled={isDisabled}
               />
               <span className="ml-3">Point</span>
             </div>
@@ -104,7 +294,10 @@ export default function Settings(): JSX.Element {
                 <input
                   type="text"
                   className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-                  value="10"
+                  onChange={(e) => setShareGamePoints(Number(e.target.value) || 0)}
+                  value={shareGamePoints}
+                  disabled={isDisabled}
+
                 />
                 <span className="ml-3">Point</span>
                 <div className="flex justify-between mt-1">
@@ -112,12 +305,23 @@ export default function Settings(): JSX.Element {
                     <input
                       type="text"
                       className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3 w-[80px]"
-                      value="10"
+                      onChange={(e) => setShareGameTime(Number(e.target.value) || 0)}
+                      value={shareGameTime}
+                      disabled={isDisabled}
+
                     />
                     <span className="ml-3">ครั้งต่อ</span>
                   </div>
-                  <select className="border-grey border-[1px] rounded-[5px] px-5">
-                    <option value=""> เดือน</option>
+                  <select
+                    onChange={(e) => setShareGamePer(e.target.value)}
+                    className="border-grey border-[1px] rounded-[5px] px-5"
+                    value={shareGamePer}
+                    disabled={isDisabled}
+
+                  >
+                    <option value="day">วัน</option>
+                    <option value="week">สัปดาห์</option>
+                    <option value="month">เดือน</option>
                   </select>
                 </div>
               </div>
@@ -136,7 +340,10 @@ export default function Settings(): JSX.Element {
               <input
                 type="text"
                 className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-                value="10"
+                onChange={(e) => setUpLevelPoints(Number(e.target.value) || 0)}
+                value={upLevelPoints}
+                disabled={isDisabled}
+
               />
               <span className="ml-3">Point</span>
             </div>
@@ -161,7 +368,10 @@ export default function Settings(): JSX.Element {
                 <input
                   type="text"
                   className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-                  value="10"
+                  onChange={(e) => setThreeStarPoints(Number(e.target.value) || 0)}
+                  value={threeStarPoints}
+                  disabled={isDisabled}
+
                 />
                 <span className="ml-3">Point</span>
               </div>
@@ -175,7 +385,10 @@ export default function Settings(): JSX.Element {
                 <input
                   type="text"
                   className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-                  value="10"
+                  onChange={(e) => setTwoStarPoints(Number(e.target.value) || 0)}
+                  value={twoStarPoints}
+                  disabled={isDisabled}
+
                 />
                 <span className="ml-3">Point</span>
               </div>
@@ -189,7 +402,10 @@ export default function Settings(): JSX.Element {
                 <input
                   type="text"
                   className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-                  value="10"
+                  onChange={(e) => setOneStarPoints(Number(e.target.value) || 0)}
+                  value={oneStarPoints}
+                  disabled={isDisabled}
+
                 />
                 <span className="ml-3">Point</span>
               </div>

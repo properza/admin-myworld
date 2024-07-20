@@ -52,7 +52,7 @@ const gameNavigation: Navigation[] = [
     name: "Player",
     text: "ผู้เล่น",
     icon: "/images/circum_medal.svg",
-    href: "/player",
+    href: "/players",
   },
   {
     name: "Setting",

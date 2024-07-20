@@ -1,26 +1,62 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
 
 interface GameSettingModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setGameStatus: (status: string) => void;
+  setOpenedDate: (date: string) => void;
+  setClosedDate: (date: string) => void;
+  updateGameStatus: () => void;
+  gameStatus: string;
+  openedDate: string;
+  closedDate: string;
 }
 
-const GameSettingModal = ({ setIsOpen, isOpen }: GameSettingModalProps) => {
-  const [inputValue, setInputValue] = useState(0);
-  const [setToggle, SetToggle] = useState(false);
+const GameSettingModal = ({
+  setIsOpen,
+  isOpen,
+  setGameStatus,
+  setOpenedDate,
+  setClosedDate,
+  updateGameStatus,
+  gameStatus,
+  openedDate,
+  closedDate,
+}: GameSettingModalProps) => {
+  const [setToggle,SetToggle] = useState(false);
+  const [setToggleDate,SetToggleDate] = useState(false);
 
   const handleClose = () => {
     setIsOpen(false);
   };
 
-  const handleUpdate = () => {
+  if (!isOpen) {
+    return null;
+  } 
 
+  const setOpenStatus = (value: string) => {
+    SetToggle(false);
+    setOpenedDate("");
+    setClosedDate("");
+    setGameStatus(value);
+  };
+
+  const setCloseStatus = (value: string) => {
+    SetToggle(true);
+    setGameStatus(value);
+  };
+
+  const setDateReset = () => {
+    setOpenedDate("");
+    setClosedDate("");
+    SetToggleDate(false);
+  };
+
+  const OnSubmit = () => {
+    updateGameStatus()
     setIsOpen(false);
   };
 
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -34,11 +70,12 @@ const GameSettingModal = ({ setIsOpen, isOpen }: GameSettingModalProps) => {
             {" "}
             <input
               type="radio"
-              onChange={() => SetToggle(false)}
-              name="open"
+              onClick={() => setOpenStatus("available")}
+              name="open_service"
               className="p-1 rounded-[20px] mr-2 accent-[#28B7E1]"
               id="openBox"
-              checked={!setToggle}
+              value={gameStatus}
+              checked={gameStatus === "available"}
             />
             <label htmlFor="openBox">เปิดให้บริการ</label>
           </div>
@@ -46,33 +83,42 @@ const GameSettingModal = ({ setIsOpen, isOpen }: GameSettingModalProps) => {
             {" "}
             <input
               type="radio"
-              onClick={() => SetToggle(true)}
-              name="open"
+              onClick={() => setCloseStatus("unavailable")}
+              name="close_service"
               className="p-1 rounded-[20px] mr-2 accent-[#28B7E1] "
-              id="closeBox"
-              checked={setToggle}
+              value={gameStatus}
+              checked={gameStatus === "unavailable"}
             />
             <label htmlFor="closeBox">ปิดให้บริการ</label>
           </div>
         </div>
         <div className={setToggle ? "" : "hidden"}>
-          <div className="flex justify-between mb-2 my-auto">
-            <p className="my-auto">วันที่เริ่มปิด</p>
-            <input
-              type="date"
-              className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-            />
-          </div>
-          <div className="flex justify-between ">
-            <p className="my-auto">วันที่สิ้นสุด</p>
-            <input
-              type="date"
-              className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
-            />
+          <div className={setToggleDate === false ? "py-2" : "hidden"}>
+            <div className="flex justify-between mb-2 my-auto">
+              <p className="my-auto">วันที่เริ่มปิด</p>
+              <input
+                onChange={(e) => setOpenedDate(e.target.value)}
+                type="date"
+                name="start_date"
+                value={openedDate}
+                className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
+              />
+            </div>
+            <div className="flex justify-between ">
+              <p className="my-auto">วันที่สิ้นสุด</p>
+              <input
+                onChange={(e) => setClosedDate(e.target.value)}
+                type="date"
+                name="end_date"
+                value={openedDate}
+                className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3"
+              />
+            </div>
           </div>
           <div className="flex justify-start">
             <input
               type="checkbox"
+              onChange={(e) => setDateReset()}
               className="border-grey border-[1px] rounded-[5px] py-2 text-end p-3 mr-1"
             />
             <p>ไม่ระบุวันสิ้นสุด</p>
@@ -86,7 +132,10 @@ const GameSettingModal = ({ setIsOpen, isOpen }: GameSettingModalProps) => {
         </div>
 
         <div className="flex">
-          <button className="bg-transparent border-red-500 border-[1px] text-red-500 px-4 py-2 rounded-[10px] mr-2 w-full">
+          <button
+            onClick={OnSubmit}
+            className="bg-transparent border-red-500 border-[1px] text-red-500 px-4 py-2 rounded-[10px] mr-2 w-full"
+          >
             Confirm
           </button>
           <button
