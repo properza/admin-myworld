@@ -58,8 +58,10 @@ function CustomerShippingInfo({
           </span>
         </div>
         <div>
+
           <span>เบอร์โทร:</span>{" "}
           <span>{tradeDetail.customer.email || "-"}</span>
+          
         </div>
         <div>
           <span>อีเมล:</span> <span>{tradeDetail.phone || "-"}</span>
