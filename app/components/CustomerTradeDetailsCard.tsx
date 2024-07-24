@@ -60,11 +60,11 @@ function CustomerShippingInfo({
         <div>
 
           <span>เบอร์โทร:</span>{" "}
-          <span>{tradeDetail.customer.email || "-"}</span>
-          
+          <span>{tradeDetail.phone || "-"}</span>
+
         </div>
         <div>
-          <span>อีเมล:</span> <span>{tradeDetail.phone || "-"}</span>
+          <span>อีเมล:</span> <span>{tradeDetail.customer.email || "-"}</span>
         </div>
       </div>
     </div>
