@@ -20,6 +20,12 @@ import {
 } from "~/models/trade.server";
 import { getUserData, requireUserId } from "~/services/session.server";
 import { constructURL } from "~/utils";
+import { format } from "date-fns";
+
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 
@@ -29,13 +35,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { accessToken } = await getUserData(request);
   const { searchParams } = new URL(request.url);
 
+  const page = searchParams.get("page");
   const filter = searchParams.get("filter");
-  const page = +(searchParams.get("page") || 1);
+  const startAt = searchParams.get("startAt");
+  const endAt = searchParams.get("endAt");
 
   const trades = await getTrades(accessToken, {
+    page,
     search: filter,
-    perPage: 10,
-    page: `${page}`,
+    startAt,
+    endAt,
   });
 
   return json({ trades });
@@ -80,16 +89,16 @@ export default function Redeem(): JSX.Element {
   const { trades } = useLoaderData<typeof loader>();
   const [tradeData, setTradeData] = useState<TradesWithItemNo[]>([]);
   const [tradeMetadata, setTradeMetadata] = useState<TradeMetadata>({
-    currentPage: 0,
+    currentPage: 1,
     perPage: 0,
-    totalPage: 0,
+    totalPage: 1,
     totalRow: 0,
   });
-  const [filterQuery, setFilterQuery] = useState<string>("");
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [filterQuery, setFilterQuery] = useState<string>("");
+  const [, setSearchParams] = useSearchParams();
   const location = useLocation();
 
-  useEffect(() => {
+  useMemo(() => {
     if (trades && trades.data) {
       setTradeMetadata({
         currentPage: trades.currentPage,
@@ -113,17 +122,17 @@ export default function Redeem(): JSX.Element {
       });
       setTradeData([]);
     }
-  }, [trades]);
+  }, [trades , trades.currentPage , trades.perPage]);
 
-  useEffect(() => {
-    setSearchParams(
-      (prev) => {
-        filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
-        return prev;
-      },
-      { preventScrollReset: true },
-    );
-  }, [filterQuery]);
+  // useEffect(() => {
+  //   setSearchParams(
+  //     (prev) => {
+  //       filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
+  //       return prev;
+  //     },
+  //     { preventScrollReset: true },
+  //   );
+  // }, [filterQuery , setSearchParams]);
 
   return (
     <Layout
@@ -134,8 +143,8 @@ export default function Redeem(): JSX.Element {
     >
       <TradeTable
         data={{ ...tradeMetadata, data: tradeData }}
-        filter={filterQuery}
-        setFilter={setFilterQuery}
+        // filter={filterQuery}
+        // setFilter={setFilterQuery}
       />
     </Layout>
   );
