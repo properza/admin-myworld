@@ -16,6 +16,7 @@ import {
 import CustomDropdownStatus from "./CustomDropdownStatus";
 import DetailButton from "./DetailButton";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
+import EmptyState from "./EmptyState";
 
 import Datepicker from "react-tailwindcss-datepicker";
 import { Prettify } from "~/utils.type";
@@ -374,6 +375,12 @@ function TradeTable({ data }: TradeTableProps): JSX.Element {
           </tbody>
         </table>
         {/* Empty State Here */}
+
+        {data.totalRow === 0 ? (
+          <div className="flex h-full justify-center items-center ">
+            <EmptyState />
+          </div>
+        ) : null}
       </div>
 
       {/* footer */}
