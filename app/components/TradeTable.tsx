@@ -8,6 +8,7 @@ import {
 import PaginationNavigator from "./PaginationNavigator";
 import { classNames } from "~/tailwind";
 import Search from "./Search";
+import EmptyState from "./EmptyState";
 import {
   TradeList,
   TradeListWithItemNo,
@@ -397,6 +398,11 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
           </tbody>
         </table>
         {/* Empty State Here */}
+        {data.totalRow === 0 ? (
+          <div className="flex h-full justify-center items-center ">
+            <EmptyState />
+          </div>
+        ) : null}
       </div>
 
       {/* footer */}
