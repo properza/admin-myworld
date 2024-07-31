@@ -27,6 +27,7 @@ import {
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
+import { convertUTC } from "~/utils";
 
 const columnHelper = createColumnHelper<TradeTableData["data"][number]>();
 
@@ -76,6 +77,8 @@ interface TradeTableProps {
   data: TradeTableData;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  dateValue?: DateType;
+  handleValueChange?: (value: DateType) => void;
 }
 
 const EditAprroveStatus: FC<{
@@ -184,23 +187,62 @@ const EditShipmentStatus: FC<{
     </Form>
   );
 };
+
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
+
 function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
-  let today = new Date();
-  let sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
   const submit = useSubmit();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const currentpage = +(searchParams.get("page") || "1");
-  const [value, setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
 
-  function handleValueChange(newValue: any) {
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  const defaultDate = {
+    startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
+    endDate: format(today, "yyyy-MM-dd"),
+  };
+  const [dateValue, setValue] = useState<DateType>(defaultDate);
+
+  function handleValueChange(newValue: DateType) {
     console.log("handleValueChange", newValue);
     setValue(newValue);
   }
+
+  const [, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const updatedSearchParams = new URLSearchParams(prev);
+        if (dateValue?.startDate) {
+          // start date
+          updatedSearchParams.set(
+            "startAt",
+            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
+          );
+        } else {
+          updatedSearchParams.delete("startAt");
+        }
+        if (dateValue?.endDate) {
+          // end date
+          updatedSearchParams.set(
+            "endAt",
+            convertUTC({ dateValue: dateValue.endDate }),
+          );
+        } else {
+          updatedSearchParams.delete("endAt");
+        }
+
+        return updatedSearchParams;
+      },
+      { preventScrollReset: true },
+    );
+  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
   const columns = useMemo(
     () => [
@@ -298,8 +340,8 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
         <div className="flex flex-row gap-x-3">
           <Datepicker
             primaryColor={"blue"}
-            value={value}
-            onChange={handleValueChange}
+            value={dateValue!}
+            onChange={(value) => handleValueChange(value as DateType) }
           />
           <Search filter={filter} setFilter={setFilter} />
         </div>
@@ -363,16 +405,15 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {currentpage} of {data.totalPage}
+          {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
           </strong>
         </span>
 
         <PaginationNavigator
-          currentPage={currentpage}
-          totalPage={data.totalPage}
-          setPageIndex={(e) => {
-            navigate(`/trades?page=${e + 1}`, { replace: true });
-          }}
+          currentPage={table.getState().pagination.pageIndex + 1}
+          totalPage={table.getPageCount()}
+          setPageIndex={table.setPageIndex}
         />
       </div>
     </div>

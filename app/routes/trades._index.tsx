@@ -29,13 +29,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { accessToken } = await getUserData(request);
   const { searchParams } = new URL(request.url);
 
+  const page = searchParams.get("page");
   const filter = searchParams.get("filter");
-  const page = +(searchParams.get("page") || 1);
+  const startAt = searchParams.get("startAt");
+  const endAt = searchParams.get("endAt");
 
   const trades = await getTrades(accessToken, {
+    page,
     search: filter,
-    perPage: 10,
-    page: `${page}`,
+    startAt,
+    endAt,
   });
 
   return json({ trades });

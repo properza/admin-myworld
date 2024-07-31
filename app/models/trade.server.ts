@@ -63,8 +63,10 @@ export interface TradeMetadata {
 
 interface GetTradeParams {
   page: string | null | undefined;
-  search: string | null | undefined;
   perPage: number | null | undefined;
+  startAt: string | null | undefined;
+  endAt: string | null | undefined;
+  search: string | null | undefined;
 }
 
 export interface TradesDetail {
@@ -124,14 +126,22 @@ export async function getTrades(
     endpointURL.searchParams.set("page", String(params.page));
   }
 
+  
+  if (params?.perPage) {
+    endpointURL.searchParams.set("perPage", String(params.perPage));
+  }
+  
   if (params?.search) {
     endpointURL.searchParams.set("search", params.search);
   }
 
-  if (params?.perPage) {
-    endpointURL.searchParams.set("perPage", String(params.perPage));
+  if (params?.startAt) {
+    endpointURL.searchParams.set("startAt", String(params.startAt));
   }
 
+  if (params?.endAt) {
+    endpointURL.searchParams.set("endAt", String(params.endAt));
+  }
   const response = await fetch(endpointURL.toString(), {
     method: "GET",
     headers: {
