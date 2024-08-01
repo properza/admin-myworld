@@ -29,6 +29,9 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { convertUTC } from "~/utils";
+// import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+
+const timeZone = 'Asia/Bangkok';
 
 const columnHelper = createColumnHelper<TradeTableData["data"][number]>();
 
@@ -134,7 +137,10 @@ const EditAprroveStatus: FC<{
     </Form>
   );
 };
-import { format } from "date-fns";
+
+import { parseISO, format, addHours, subHours } from "date-fns";
+const timeZoneOffset = 7;
+
 const EditShipmentStatus: FC<{
   id: string;
   approve_status: string;
@@ -245,6 +251,8 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
     );
   }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
+  //console.log("1"+dateValue.endDate, dateValue.startDate, 'setSearchParams');
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("itemNo", {
@@ -257,11 +265,14 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
       }),
       columnHelper.accessor("created_at", {
         header: () => "วันที่แลกซื้อ",
-        cell: (info) => (
-          <span className="text-nowrap">
-            {format(info.getValue(), "d MMMM yyyy")}
-          </span>
-        ),
+        
+        // cell: (info) => format(parseISO(info.getValue()), "dd MMM yyyy HH:mm"),
+        cell: (info) => {
+          const date = parseISO(info.getValue());
+          const zonedDate = subHours(date, timeZoneOffset);
+          return format(zonedDate, 'dd MMMM yyyy HH:mm');
+        },
+        
       }),
       columnHelper.accessor("customer.name", {
         header: () => "ชื่อผู้ใช้",
