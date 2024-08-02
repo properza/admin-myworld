@@ -175,8 +175,8 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
                   point: +original.point,
                   original_picture: original.picture,
                   redeem_per_customer: +original.redeem_per_customer,
-                  start_date: original.start_date,
-                  end_date: original.end_date,
+                  start_date: new Date(original.start_date),
+                  end_date: new Date(original.end_date),
                 });
                 setFormMethod("edit");
                 setisOpen(true);
