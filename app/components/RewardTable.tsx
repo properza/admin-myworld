@@ -437,13 +437,13 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
                     type="date"
                     className=" block w-full px-4 py-2 rounded border-2"
                     name="start_date"
+                    value={formValues.start_date.toISOString().split("T")[0]}
                     onChange={(e) =>
                       setFormValues({
                         ...formValues,
                         start_date: e.target.valueAsDate || new Date(),
                       })
                     }
-                    value={formValues.start_date}
                   />
                 </div>
                 <div className="mb-4">
@@ -458,7 +458,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
                         end_date: e.target.valueAsDate || new Date(),
                       })
                     }
-                    value={formValues.end_date}
+                    value={formValues.end_date.toISOString().split("T")[0]}
                   />
                 </div>
               </div>
