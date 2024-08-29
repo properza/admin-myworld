@@ -18,9 +18,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
 
   const filter = searchParams.get("filter");
+  const page = searchParams.get("page");
 
   const customers = await getCustomers(accessToken, {
     search: filter,
+    page: page,
     perPage: 10,
   });
 
@@ -43,6 +45,7 @@ function CustomerIndexPage(): JSX.Element {
     totalRow: 0,
   });
   const [filterQuery, setFilterQuery] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
 
   useMemo(() => {
     if (customers && customers.data) {
@@ -61,6 +64,7 @@ function CustomerIndexPage(): JSX.Element {
       );
 
       setCustomerData(data);
+      setPage(customers.currentPage); // Update page state with currentPage from customers data
     } else {
       setCustomerMetadata({
         currentPage: 1,
@@ -69,6 +73,7 @@ function CustomerIndexPage(): JSX.Element {
         perPage: 10,
       });
       setCustomerData([]);
+      setPage(1); // Reset page state to 1
     }
   }, [customers]);
 
@@ -76,11 +81,12 @@ function CustomerIndexPage(): JSX.Element {
     setSearchParams(
       (prev) => {
         filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
+        prev.set("page", page.toString()); // Update search params with current page
         return prev;
       },
       { preventScrollReset: true },
     );
-  }, [filterQuery]);
+  }, [page, filterQuery]);
 
   return (
     <Layout
@@ -93,6 +99,8 @@ function CustomerIndexPage(): JSX.Element {
         data={{ ...customerMetadata, data: customerData }}
         filter={filterQuery}
         setFilter={setFilterQuery}
+        setPage={setPage}
+        // currentPage={page} // Pass current page to CustomerTable
       />
     </Layout>
   );

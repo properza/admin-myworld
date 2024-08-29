@@ -137,6 +137,11 @@ function StockTable({ data, accessToken }: StockTableProps): JSX.Element {
     ],
     [data],
   );
+
+  useEffect(() => {
+    console.log(table.getPageCount())
+    console.log('data',data)
+  },[])
   const table = useReactTable({
     data: data.data,
     columns,

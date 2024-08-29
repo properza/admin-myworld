@@ -12,7 +12,7 @@ import { classNames } from "~/tailwind";
 import { Prettify } from "~/utils.type";
 
 import DetailButton from "./DetailButton";
-import PaginationNavigator from "./PaginationNavigator";
+import PaginationCustom from "./PaginationCustom";
 import Search from "./Search";
 import UsernameSection from "./UserNameSection";
 
@@ -72,12 +72,14 @@ interface CustomerTableProps {
   data: CustomerTableData;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function CustomerTable({
   data,
   filter,
   setFilter,
+  setPage
 }: CustomerTableProps): JSX.Element {
   const table = useReactTable({
     data: data.data,
@@ -86,8 +88,8 @@ function CustomerTable({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  React.useEffect(() => table.setPageIndex(0), [data.totalPage]);
 
+  
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-end mb-2">
@@ -149,15 +151,16 @@ function CustomerTable({
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {data.currentPage} of{" "}
+            {data.totalPage}
           </strong>
         </span>
 
-        <PaginationNavigator
-          currentPage={table.getState().pagination.pageIndex + 1}
-          totalPage={table.getPageCount()}
+        <PaginationCustom
+          currentPage={data.currentPage}
+          totalPage={data.totalPage}
           setPageIndex={table.setPageIndex}
+          setPage={setPage}
         />
       </div>
 
