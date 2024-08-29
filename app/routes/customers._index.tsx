@@ -100,7 +100,6 @@ function CustomerIndexPage(): JSX.Element {
         filter={filterQuery}
         setFilter={setFilterQuery}
         setPage={setPage}
-        // currentPage={page} // Pass current page to CustomerTable
       />
     </Layout>
   );
