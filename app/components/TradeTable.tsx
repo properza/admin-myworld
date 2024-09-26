@@ -14,6 +14,7 @@ import {
   TradeListWithItemNo,
   TradeResponse,
 } from "~/models/tradeList.server";
+import PaginationCustom from "./PaginationCustom";
 import CustomDropdownStatus from "./CustomDropdownStatus";
 import DetailButton from "./DetailButton";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
@@ -83,6 +84,7 @@ interface TradeTableProps {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   dateValue?: DateType;
   handleValueChange?: (value: DateType) => void;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const EditAprroveStatus: FC<{
@@ -200,11 +202,10 @@ interface DateType {
   endDate: Date | string;
 }
 
-function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
+function TradeTable({ data, filter, setFilter, setPage }: TradeTableProps): JSX.Element {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const currentpage = +(searchParams.get("page") || "1");
 
   const today = new Date();
   const sevenDaysAgo = new Date(today);
@@ -341,6 +342,7 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 50 } },
   });
 
   return (
@@ -364,7 +366,7 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
       <div
         className={classNames(
           data.totalRow > 0 ? "overflow-y-auto" : "",
-          "md:h-[12.25rem] lg:max-h-[31rem] flex-grow border-gray-400 bg-white",
+          "md:h-[12.25rem] lg:max-h-[50rem] flex-grow border-gray-400 bg-white",
         )}
       >
         <table className="w-full">
@@ -422,15 +424,16 @@ function TradeTable({ data, filter, setFilter }: TradeTableProps): JSX.Element {
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-          {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+            {data.currentPage} of{" "}
+            {data.totalPage}
           </strong>
         </span>
 
-        <PaginationNavigator
-          currentPage={table.getState().pagination.pageIndex + 1}
-          totalPage={table.getPageCount()}
+        <PaginationCustom
+          currentPage={data.currentPage}
+          totalPage={data.totalPage}
           setPageIndex={table.setPageIndex}
+          setPage={setPage}
         />
       </div>
     </div>

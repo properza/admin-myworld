@@ -35,7 +35,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const endAt = searchParams.get("endAt");
 
   const trades = await getTrades(accessToken, {
-    page,
+    page: page,
+    perPage: 50,
     search: filter,
     startAt,
     endAt,
@@ -91,7 +92,8 @@ export default function Redeem(): JSX.Element {
   const [filterQuery, setFilterQuery] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-
+  const [page, setPage] = useState<number>(1);
+  
   useEffect(() => {
     if (trades && trades.data) {
       setTradeMetadata({
@@ -100,21 +102,23 @@ export default function Redeem(): JSX.Element {
         totalRow: trades.totalRow,
         perPage: trades.perPage,
       });
-
+  
       const data: TradesWithItemNo[] = trades.data.map((trade, index) => ({
         ...trade,
         itemNo: (trades.currentPage - 1) * trades.perPage + index + 1,
       }));
-
+  
       setTradeData(data);
-    } else {
+      setPage(trades.currentPage);
+    }else {
       setTradeMetadata({
-        currentPage: 0,
-        totalPage: 0,
+        currentPage: 1,
+        totalPage: 1,
         totalRow: 0,
-        perPage: 0,
+        perPage: 50,
       });
       setTradeData([]);
+      setPage(1);
     }
   }, [trades]);
 
@@ -122,11 +126,12 @@ export default function Redeem(): JSX.Element {
     setSearchParams(
       (prev) => {
         filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
+        prev.set("page", page.toString());
         return prev;
       },
       { preventScrollReset: true },
     );
-  }, [filterQuery]);
+  }, [ page , filterQuery ]);
 
   return (
     <Layout
@@ -139,6 +144,7 @@ export default function Redeem(): JSX.Element {
         data={{ ...tradeMetadata, data: tradeData }}
         filter={filterQuery}
         setFilter={setFilterQuery}
+        setPage={setPage}
       />
     </Layout>
   );
