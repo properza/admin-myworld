@@ -80,6 +80,7 @@ export interface TradesDetail {
   province: string;
   postcode: string;
   phone: string;
+  note:string;
   point: number;
   is_delete: boolean;
   created_at: string;

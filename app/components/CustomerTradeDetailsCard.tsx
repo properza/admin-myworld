@@ -66,6 +66,11 @@ function CustomerShippingInfo({
         <div>
           <span>อีเมล:</span> <span>{tradeDetail.customer.email || "-"}</span>
         </div>
+
+        <div>
+          <span>รายละเอียด:</span> <span>{tradeDetail.note || "-"}</span>
+        </div>
+
       </div>
     </div>
   );
