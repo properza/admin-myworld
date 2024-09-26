@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 import FrontStore from "~/components/FrontStore";
 import Layout from "~/components/Layout";
 import OrderTable from "~/components/OrderTable";
+import PlayerTable from "~/components/PlayerTable";
 import TabsComponent from "~/components/Tabs";
 import TradeListTable from "~/components/TradeListTable";
 import {
@@ -47,7 +48,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     startAt,
     endAt,
   });
-  
+
   const frontStore = await getFrontStore(accessToken, {
     page,
     search: filter,
@@ -65,10 +66,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ orders, frontStore, tradeList, accessToken });
 };
 
-export const meta: MetaFunction = () => [{ title: "My Beer | Order" }];
+export const meta: MetaFunction = () => [{ title: "My Beer | Player" }];
 
-function OrderIndexPage(): JSX.Element {
+function Player(): JSX.Element {
   const location = useLocation();
+  const [filterQuery, setFilterQuery] = useState<string>("");
 
   const { orders, frontStore, tradeList, accessToken } =
     useLoaderData<typeof loader>();
@@ -239,54 +241,20 @@ function OrderIndexPage(): JSX.Element {
   // console.log(frontStoreData);
   return (
     <Layout
-      title="Order"
+      title="ผู้เล่น"
       isSubRoute={false}
       returnRoute=""
       pathname={location.pathname}
     >
-      <TabsComponent
-        isShowSearch
-        isShowDate
-        search={searchQuery}
-        setSearch={setSearchQuery}
-        dateValue={dateValue}
-        onChangeDate={handleChangeDate}
-        onChange={() => {
-          setDateValue(defaultDate);
-          setSearchQuery("");
-        }}
-        tabs={[
-          {
-            name: "Order",
-            label: "รายการสั่งซื้อ",
-            content: (
-              <OrderTable data={{ ...orderMetadata, data: orderData }} />
-            ),
-          },
-          {
-            name: "FrontStore",
-            label: "จำหน่ายหน้าร้าน",
-            content: (
-              <FrontStore
-                data={{ ...frontStoreMetadata, data: frontStoreData }}
-              />
-            ),
-          },
-          {
-            name: "Trade",
-            label: "รายการซื้อMy Beer",
-            content: (
-              <TradeListTable
-                data={{ ...TradeListMetadata, data: tradeListData }}
-                accessToken={accessToken}
-                
-              />
-            ),
-          },
-        ]}
+      <PlayerTable
+        data={{ ...TradeListMetadata, data: tradeListData }}
+        accessToken={accessToken}
+        filter={filterQuery}
+        setFilter={setFilterQuery}
+
       />
     </Layout>
   );
 }
 
-export default OrderIndexPage;
+export default Player;

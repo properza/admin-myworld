@@ -62,11 +62,11 @@ export interface TradeMetadata {
 }
 
 interface GetTradeParams {
-  page?: string | null | undefined;
-  perPage?: number | null | undefined;
-  startAt?: string | null | undefined;
-  endAt?: string | null | undefined;
-  search?: string | null | undefined;
+  page: string | null | undefined;
+  perPage: number | null | undefined;
+  startAt: string | null | undefined;
+  endAt: string | null | undefined;
+  search: string | null | undefined;
 }
 
 export interface TradesDetail {
@@ -80,6 +80,7 @@ export interface TradesDetail {
   province: string;
   postcode: string;
   phone: string;
+  note:string;
   point: number;
   is_delete: boolean;
   created_at: string;
@@ -126,6 +127,7 @@ export async function getTrades(
     endpointURL.searchParams.set("page", String(params.page));
   }
 
+  
   if (params?.perPage) {
     endpointURL.searchParams.set("perPage", String(params.perPage));
   }
@@ -133,7 +135,7 @@ export async function getTrades(
   if (params?.search) {
     endpointURL.searchParams.set("search", params.search);
   }
-  
+
   if (params?.startAt) {
     endpointURL.searchParams.set("startAt", String(params.startAt));
   }
@@ -141,9 +143,6 @@ export async function getTrades(
   if (params?.endAt) {
     endpointURL.searchParams.set("endAt", String(params.endAt));
   }
-
-  console.log("Request URL:", endpointURL.toString());
-
   const response = await fetch(endpointURL.toString(), {
     method: "GET",
     headers: {

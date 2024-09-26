@@ -175,8 +175,8 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
                   point: +original.point,
                   original_picture: original.picture,
                   redeem_per_customer: +original.redeem_per_customer,
-                  start_date: original.start_date,
-                  end_date: original.end_date,
+                  start_date: new Date(original.start_date),
+                  end_date: new Date(original.end_date),
                 });
                 setFormMethod("edit");
                 setisOpen(true);
@@ -437,13 +437,13 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
                     type="date"
                     className=" block w-full px-4 py-2 rounded border-2"
                     name="start_date"
+                    value={formValues.start_date.toISOString().split("T")[0]}
                     onChange={(e) =>
                       setFormValues({
                         ...formValues,
                         start_date: e.target.valueAsDate || new Date(),
                       })
                     }
-                    value={formValues.start_date}
                   />
                 </div>
                 <div className="mb-4">
@@ -458,7 +458,7 @@ function RewardTable({ data }: RewardTableProps): JSX.Element {
                         end_date: e.target.valueAsDate || new Date(),
                       })
                     }
-                    value={formValues.end_date}
+                    value={formValues.end_date.toISOString().split("T")[0]}
                   />
                 </div>
               </div>

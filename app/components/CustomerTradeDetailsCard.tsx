@@ -58,14 +58,19 @@ function CustomerShippingInfo({
           </span>
         </div>
         <div>
-          
+
           <span>เบอร์โทร:</span>{" "}
           <span>{tradeDetail.phone || "-"}</span>
-          
+
         </div>
         <div>
           <span>อีเมล:</span> <span>{tradeDetail.customer.email || "-"}</span>
         </div>
+
+        <div>
+          <span>รายละเอียด:</span> <span>{tradeDetail.note || "-"}</span>
+        </div>
+
       </div>
     </div>
   );

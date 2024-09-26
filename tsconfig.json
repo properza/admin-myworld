@@ -1,21 +1,15 @@
 {
-  "include": [
-    "remix.env.d.ts",
-    "**/*.ts",
-    "src",
-    "**/*.tsx",
-    "app/routes/players._index.tsx"
-  ],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "app/routes/player._index.tsx"],
   "compilerOptions": {
-    "lib": ["dom", "es6"],
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "types": ["vitest/globals"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "module": "commonjs", // Changed to lowercase for consistency
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "target": "es2020", // Changed to lowercase for consistency
+    "target": "ES2020",
     "strict": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,

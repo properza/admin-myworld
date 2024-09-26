@@ -20,12 +20,6 @@ import {
 } from "~/models/trade.server";
 import { getUserData, requireUserId } from "~/services/session.server";
 import { constructURL } from "~/utils";
-import { format } from "date-fns";
-
-interface DateType {
-  startDate: Date | string;
-  endDate: Date | string;
-}
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 
@@ -89,16 +83,16 @@ export default function Redeem(): JSX.Element {
   const { trades } = useLoaderData<typeof loader>();
   const [tradeData, setTradeData] = useState<TradesWithItemNo[]>([]);
   const [tradeMetadata, setTradeMetadata] = useState<TradeMetadata>({
-    currentPage: 1,
+    currentPage: 0,
     perPage: 0,
-    totalPage: 1,
+    totalPage: 0,
     totalRow: 0,
   });
-  // const [filterQuery, setFilterQuery] = useState<string>("");
-  const [, setSearchParams] = useSearchParams();
+  const [filterQuery, setFilterQuery] = useState<string>("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
 
-  useMemo(() => {
+  useEffect(() => {
     if (trades && trades.data) {
       setTradeMetadata({
         currentPage: trades.currentPage,
@@ -122,17 +116,17 @@ export default function Redeem(): JSX.Element {
       });
       setTradeData([]);
     }
-  }, [trades , trades.currentPage , trades.perPage]);
+  }, [trades]);
 
-  // useEffect(() => {
-  //   setSearchParams(
-  //     (prev) => {
-  //       filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
-  //       return prev;
-  //     },
-  //     { preventScrollReset: true },
-  //   );
-  // }, [filterQuery , setSearchParams]);
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
+        return prev;
+      },
+      { preventScrollReset: true },
+    );
+  }, [filterQuery]);
 
   return (
     <Layout
@@ -143,8 +137,8 @@ export default function Redeem(): JSX.Element {
     >
       <TradeTable
         data={{ ...tradeMetadata, data: tradeData }}
-        // filter={filterQuery}
-        // setFilter={setFilterQuery}
+        filter={filterQuery}
+        setFilter={setFilterQuery}
       />
     </Layout>
   );
