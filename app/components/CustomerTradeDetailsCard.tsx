@@ -12,7 +12,7 @@ function CustomerTradeDetailsCard({
 }: CustomerDetailsCardProps): JSX.Element {
   return (
     <div className="flex space-x-2">
-      <div className="w-full h-56 flex flex-row bg-white rounded-lg shadow-md relative">
+      <div className="w-full h-60 flex flex-row bg-white rounded-lg shadow-md relative">
         <div className="flex flex-row p-5 gap-6">
           <div className="flex-none left-[10px] top-[21px]">
             <img
@@ -40,7 +40,7 @@ function CustomerShippingInfo({
   tradeDetail: TradesDetail;
 }): JSX.Element {
   return (
-    <div className="min-w-[300px] max-w-[320px] h-56 bg-white rounded-lg shadow-md relative p-5">
+    <div className="min-w-[300px] max-w-[320px] h-60 bg-white rounded-lg shadow-md relative p-5">
       <p>
         <b>ที่อยู่จัดส่ง</b>
       </p>
