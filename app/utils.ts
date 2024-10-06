@@ -7,6 +7,7 @@ import type { User } from "~/models/user.server";
 const DEFAULT_REDIRECT = "/";
 
 export function safeRedirect(
+  
   to: FormDataEntryValue | string | null | undefined,
   defaultRedirect: string = DEFAULT_REDIRECT,
 ) {
