@@ -16,6 +16,7 @@ sourceMapSupport.install();
 installGlobals();
 run();
 
+
 async function run() {
   const BUILD_PATH = path.resolve("build/index.js");
   const VERSION_PATH = path.resolve("build/version.txt");
