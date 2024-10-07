@@ -5,6 +5,7 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
+import PaginationCustom from "./PaginationCustom";
 import PaginationNavigator from "./PaginationNavigator";
 import { classNames } from "~/tailwind";
 import Search from "./Search";
@@ -12,7 +13,8 @@ import { Trades,TradesWithItemNo,TradeResponse } from "~/models/trade.server";
 import CustomDropdownStatus from "./CustomDropdownStatus";
 import { FC,useEffect,useMemo,useRef,useState } from "react";
 import { constructURL } from "~/utils";
-
+import { parseISO, format, addHours, subHours } from "date-fns";
+import { convertUTC } from "~/utils";
 import Datepicker from "react-tailwindcss-datepicker";
 import { Prettify } from "~/utils.type";
 import {
@@ -29,11 +31,22 @@ import {
 import DetailButton from "./DetailButton";
 import DropdownSelect from "./DropdownSelect";
 
+const timeZoneOffset = 7;
+
 interface PlayerProps {
   data: PlayersData;
   filter: string;
+  dateValue?: DateType;
+  handleValueChange?: (value: DateType) => void;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
+
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
+
 
 export type PlayersData = Prettify<
   Omit<PlayersResponse,"data"> & { data: PlayersDataWithItemNo[] }
@@ -79,12 +92,16 @@ const columns = [
   }),
 
   columnHelper.accessor("email",{
-    header: () => "Start date",
+    header: () => "E-mail",
     cell: (info) => info.getValue() ?? "-",
   }),
   columnHelper.accessor("created_at",{
     header: () => "Start date",
-    cell: (info) => info.getValue() ?? "-",
+    cell: (info) => {
+      const date = parseISO(info.getValue());
+      const zonedDate = subHours(date, timeZoneOffset);
+      return format(zonedDate, 'd MMMM yyyy HH:mm');
+    },
   }),
 
   columnHelper.accessor("game_level",{
@@ -120,23 +137,56 @@ function PlayerTable({
   data,
   filter,
   setFilter,
+  setPage
 }: PlayerProps): JSX.Element {
-  let today = new Date();
-  let sevenDaysAgo = new Date(today);
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  const [value,setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
+  const defaultDate = {
+    startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
+    endDate: format(today, "yyyy-MM-dd"),
+  };
+  const [dateValue, setValue] = useState<DateType>(defaultDate);
 
 
   const [selectedOption,setSelectedOption] = useState("001");
 
 
-  function handleValueChange(newValue: any) {
-    console.log("handleValueChange",newValue);
+  function handleValueChange(newValue: DateType) {
+    console.log("handleValueChange", newValue);
     setValue(newValue);
   }
+
+  const [, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const updatedSearchParams = new URLSearchParams(prev);
+        if (dateValue?.startDate) {
+          // start date
+          updatedSearchParams.set(
+            "startAt",
+            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
+          );
+        } else {
+          updatedSearchParams.delete("startAt");
+        }
+        if (dateValue?.endDate) {
+          // end date
+          updatedSearchParams.set(
+            "endAt",
+            convertUTC({ dateValue: dateValue.endDate }),
+          );
+        } else {
+          updatedSearchParams.delete("endAt");
+        }
+
+        return updatedSearchParams;
+      },
+      { preventScrollReset: true },
+    );
+  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
 
   const table = useReactTable({
@@ -144,6 +194,7 @@ function PlayerTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 50 } },
   });
 
 
@@ -155,8 +206,8 @@ function PlayerTable({
         <div className="flex flex-row gap-x-3">
           <Datepicker
             primaryColor={"blue"}
-            value={value}
-            onChange={handleValueChange}
+            value={dateValue!}
+            onChange={(value) => handleValueChange(value as DateType) }
           />
           <DropdownSelect
             selected={selectedOption}
@@ -169,7 +220,7 @@ function PlayerTable({
       <div
         className={classNames(
           data.totalRow > 0 ? "overflow-y-auto" : "",
-          "md:h-[12.25rem] lg:max-h-[31rem] flex-grow border-gray-400 bg-white rounded-[10px] p-[10px]",
+          "md:h-[12.25rem] lg:max-h-[50rem] flex-grow border-gray-400 bg-white rounded-[10px] p-[10px]",
         )}
       >
         <table className="w-full">
@@ -236,10 +287,11 @@ function PlayerTable({
           </strong>
         </span>
 
-        <PaginationNavigator
-          currentPage={table.getState().pagination.pageIndex + 1}
-          totalPage={table.getPageCount()}
+        <PaginationCustom
+          currentPage={data.currentPage}
+          totalPage={data.totalPage}
           setPageIndex={table.setPageIndex}
+          setPage={setPage}
         />
 
       </div>

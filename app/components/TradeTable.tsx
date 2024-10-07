@@ -271,7 +271,7 @@ function TradeTable({ data, filter, setFilter, setPage }: TradeTableProps): JSX.
         cell: (info) => {
           const date = parseISO(info.getValue());
           const zonedDate = subHours(date, timeZoneOffset);
-          return format(zonedDate, 'dd MMMM yyyy HH:mm');
+          return format(zonedDate, 'd MMMM yyyy HH:mm');
         },
         
       }),
