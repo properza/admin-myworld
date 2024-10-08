@@ -12,7 +12,6 @@ import express from "express";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
 
-
 sourceMapSupport.install();
 installGlobals();
 run();

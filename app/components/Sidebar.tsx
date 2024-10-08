@@ -79,7 +79,7 @@ export default function Sidebar({
   openModal,
 }: SidebarProps): JSX.Element {
   return (
-    <div className="flex flex-col w-64 bg-white text-white shadow-md z-10">
+    <div className="flex flex-col w-64 bg-white text-white shadow-md z-10 h-[110vh]">
       <div className="flex flex-col items-center justify-center h-32 mt-8 mb-8">
         <img
           src="/images/brand-logo.svg"
@@ -178,8 +178,6 @@ export default function Sidebar({
 
           <hr className="border-t border-philippine-silver mx-5 my-2.5 h-2.5 mt-4" />
         </ul>
-      </div>
-
       <div className="bg-white flex mx-5 mb-6 rounded-md p-2 leading-6 items-center">
         <img
           src="/images/logout.svg"
@@ -195,6 +193,8 @@ export default function Sidebar({
           Logout
         </button>
       </div>
+      </div>
+
     </div>
   );
 }

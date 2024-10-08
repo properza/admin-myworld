@@ -73,14 +73,14 @@ function OrderIndexPage(): JSX.Element {
   const { orders, frontStore, tradeList, accessToken } =
     useLoaderData<typeof loader>();
   const [orderData, setOrderData] = useState<OrderDataWithItemNo[]>([]);
-  const [tradeListData, setTradeListDate] = useState<TradeListDataWithItemNo[]>(
+  const [tradeListData, setTradeListData] = useState<TradeListDataWithItemNo[]>(
     [],
   );
   const [frontStoreData, setFrontStoreDate] = useState<
     FrontStoreDataWithItemNo[]
   >([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orderMetadata, setOrderMetadata] = useState<OrderMetadata>({
     currentPage: 1,
     perPage: 0,
@@ -195,7 +195,7 @@ function OrderIndexPage(): JSX.Element {
         }),
       );
 
-      setTradeListDate(data);
+      setTradeListData(data);
     } else {
       setTradeListMetadata({
         currentPage: 1,
@@ -203,7 +203,7 @@ function OrderIndexPage(): JSX.Element {
         totalRow: 0,
         perPage: 10,
       });
-      setTradeListDate([]);
+      setTradeListData([]);
     }
   }, [tradeList, orders.currentPage, orders.perPage]);
 
