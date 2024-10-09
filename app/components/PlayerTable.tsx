@@ -204,11 +204,11 @@ function PlayerTable({
       <div className="flex justify-between items-end mb-4">
         <p>ผู้เล่นเกมส์ทั้งหมด ({data.totalRow})</p>
         <div className="flex flex-row gap-x-3">
-          <Datepicker
+          {/* <Datepicker
             primaryColor={"blue"}
             value={dateValue!}
             onChange={(value) => handleValueChange(value as DateType) }
-          />
+          /> */}
           <DropdownSelect
             selected={selectedOption}
             setSelected={setSelectedOption}
@@ -248,17 +248,7 @@ function PlayerTable({
           </thead>
 
           <tbody>
-            {data.totalRow === 0 && (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="flex-grow flex-shrink-0 h-[2.8rem] px-2 py-1 bg-white border-b border-gray-400 justify-center gap-2.5 text-stone-800 text-sm font-normal font-roboto"
-                >
-                  No data found
-                </td>
-              </tr>
-            )}
-            {table.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows.map((row, index) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <td

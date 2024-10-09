@@ -69,35 +69,6 @@ export default function  PlayerIndexPage(): JSX.Element {
   const [dateValue, setDateValue] = useState<DateType>(defaultDate);
   const [page, setPage] = useState<number>(1);
 
-  // useEffect(() => {
-  //   setSearchParams(
-  //     (prev) => {
-  //       const updatedSearchParams = new URLSearchParams(prev);
-  //       if (dateValue?.startDate) {
-  //         // start date
-  //         updatedSearchParams.set(
-  //           "startAt",
-  //           convertUTC({ dateValue: dateValue.startDate, isStart: true }),
-  //         );
-  //       } else {
-  //         updatedSearchParams.delete("startAt");
-  //       }
-  //       if (dateValue?.endDate) {
-  //         // end date
-  //         updatedSearchParams.set(
-  //           "endAt",
-  //           convertUTC({ dateValue: dateValue.endDate }),
-  //         );
-  //       } else {
-  //         updatedSearchParams.delete("endAt");
-  //       }
-
-  //       return updatedSearchParams;
-  //     },
-  //     { preventScrollReset: true },
-  //   );
-  // }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
-
   useEffect(() => {
     setSearchParams(
       (prev) => {
