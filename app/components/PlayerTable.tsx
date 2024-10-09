@@ -204,11 +204,11 @@ function PlayerTable({
       <div className="flex justify-between items-end mb-4">
         <p>ผู้เล่นเกมส์ทั้งหมด ({data.totalRow})</p>
         <div className="flex flex-row gap-x-3">
-          {/* <Datepicker
+          <Datepicker
             primaryColor={"blue"}
             value={dateValue!}
             onChange={(value) => handleValueChange(value as DateType) }
-          /> */}
+          />
           <DropdownSelect
             selected={selectedOption}
             setSelected={setSelectedOption}
