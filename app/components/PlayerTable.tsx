@@ -170,7 +170,7 @@ function PlayerTable({
       <div
         className={classNames(
           data.totalRow > 0 ? "overflow-y-auto" : "",
-          "md:h-[12.25rem] lg:max-h-[31rem] flex-grow border-gray-400 bg-white rounded-[10px] p-[10px]",
+          "md:h-[12.25rem] lg:max-h-[50rem] flex-grow border-gray-400 bg-white rounded-[10px] p-[10px]",
         )}
       >
         <table className="w-full">
@@ -239,7 +239,7 @@ function PlayerTable({
 
         <PaginationNavigator
           currentPage={table.getState().pagination.pageIndex + 1}
-          totalPage={table.getPageCount()}
+          totalPage={data.totalRow}
           setPageIndex={table.setPageIndex}
         />
 
