@@ -32,8 +32,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const endAt = searchParams.get("endAt");
 
   const players = await playersList(accessToken, {
-    page: page,
-    perPage: 50,
+    page,
     search: filter,
     startAt,
     endAt,
@@ -53,9 +52,9 @@ export default function  PlayerIndexPage(): JSX.Element {
   const [searchParams,setSearchParams] = useSearchParams();
 
   const [PlayersMetadata, setPlayersMetadata] = useState<PlayersMetadata>({
-    currentPage: 0,
+    currentPage: 1,
     perPage: 0,
-    totalPage: 0,
+    totalPage: 1,
     totalRow: 0,
   });
 
@@ -67,18 +66,45 @@ export default function  PlayerIndexPage(): JSX.Element {
     endDate: format(today, "yyyy-MM-dd"),
   };
   const [dateValue, setDateValue] = useState<DateType>(defaultDate);
-  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     setSearchParams(
       (prev) => {
-        filterQuery ? prev.set("filter", filterQuery) : prev.delete("filter");
-        prev.set("page", page.toString());
+        const updatedSearchParams = new URLSearchParams(prev);
+        if (dateValue?.startDate) {
+          // start date
+          updatedSearchParams.set(
+            "startAt",
+            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
+          );
+        } else {
+          updatedSearchParams.delete("startAt");
+        }
+        if (dateValue?.endDate) {
+          // end date
+          updatedSearchParams.set(
+            "endAt",
+            convertUTC({ dateValue: dateValue.endDate }),
+          );
+        } else {
+          updatedSearchParams.delete("endAt");
+        }
+
+        return updatedSearchParams;
+      },
+      { preventScrollReset: true },
+    );
+  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        searchQuery ? prev.set("filter", searchQuery) : prev.delete("filter");
         return prev;
       },
       { preventScrollReset: true },
     );
-  }, [ page , filterQuery ]);
+  }, [searchQuery, setSearchParams]);
 
   useMemo(() => {
     if (players && players.data) {
@@ -96,7 +122,6 @@ export default function  PlayerIndexPage(): JSX.Element {
         }),
       );
       setPlayersDate(data);
-      setPage(players.currentPage);
     } else {
       setPlayersMetadata({
         currentPage: 1,
@@ -105,7 +130,6 @@ export default function  PlayerIndexPage(): JSX.Element {
         perPage: 10,
       });
       setPlayersDate([]);
-      setPage(1);
     }
   }, [players]);
 
@@ -123,7 +147,6 @@ export default function  PlayerIndexPage(): JSX.Element {
         // accessToken={accessToken}
         filter={filterQuery}
         setFilter={setFilterQuery}
-        setPage={setPage}
       />
     </Layout>
   );
