@@ -32,7 +32,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const endAt = searchParams.get("endAt");
 
   const players = await playersList(accessToken, {
-    page,
+    page: page,
+    perPage: 50,
     search: filter,
     startAt,
     endAt,
