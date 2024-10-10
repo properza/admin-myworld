@@ -51,6 +51,7 @@ export default function  PlayerIndexPage(): JSX.Element {
   const [playersData, setPlayersDate] = useState<PlayersDataWithItemNo[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchParams,setSearchParams] = useSearchParams();
+  const [page, setPage] = useState<number>(1);
 
   const [PlayersMetadata, setPlayersMetadata] = useState<PlayersMetadata>({
     currentPage: 1,
@@ -101,11 +102,14 @@ export default function  PlayerIndexPage(): JSX.Element {
     setSearchParams(
       (prev) => {
         searchQuery ? prev.set("filter", searchQuery) : prev.delete("filter");
+        prev.set("page", page.toString());
         return prev;
       },
       { preventScrollReset: true },
     );
-  }, [searchQuery, setSearchParams]);
+  }, [ page , searchQuery ]);
+
+
 
   useMemo(() => {
     if (players && players.data) {
@@ -123,6 +127,7 @@ export default function  PlayerIndexPage(): JSX.Element {
         }),
       );
       setPlayersDate(data);
+      setPage(players.currentPage);
     } else {
       setPlayersMetadata({
         currentPage: 1,
@@ -131,6 +136,7 @@ export default function  PlayerIndexPage(): JSX.Element {
         perPage: 10,
       });
       setPlayersDate([]);
+      setPage(1);
     }
   }, [players]);
 
@@ -145,9 +151,9 @@ export default function  PlayerIndexPage(): JSX.Element {
     >
       <PlayerTable
         data={{ ...PlayersMetadata, data: playersData }}
-        // accessToken={accessToken}
         filter={filterQuery}
         setFilter={setFilterQuery}
+        setPage={setPage}
       />
     </Layout>
   );

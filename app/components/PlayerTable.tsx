@@ -5,6 +5,7 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
+import PaginationCustom from "./PaginationCustom";
 import PaginationNavigator from "./PaginationNavigator";
 import { classNames } from "~/tailwind";
 import Search from "./Search";
@@ -33,6 +34,7 @@ interface PlayerProps {
   data: PlayersData;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export type PlayersData = Prettify<
@@ -120,6 +122,7 @@ function PlayerTable({
   data,
   filter,
   setFilter,
+  setPage
 }: PlayerProps): JSX.Element {
   let today = new Date();
   let sevenDaysAgo = new Date(today);
@@ -237,10 +240,17 @@ function PlayerTable({
           </strong>
         </span>
 
-        <PaginationNavigator
-          currentPage={table.getState().pagination.pageIndex + 1}
+        {/* <PaginationNavigator
+          currentPage={data.currentPage + 1}
           totalPage={data.totalRow}
           setPageIndex={table.setPageIndex}
+        /> */}
+
+        <PaginationCustom
+          currentPage={data.currentPage}
+          totalPage={data.totalPage}
+          setPageIndex={table.setPageIndex}
+          setPage={setPage}
         />
 
       </div>
