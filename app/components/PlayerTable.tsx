@@ -144,6 +144,7 @@ function PlayerTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 50 } },
   });
 
 
