@@ -117,6 +117,13 @@ const columns = [
   }),
 ];
 
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
+
+import { parseISO, format, addHours, subHours } from "date-fns";
+import { convertUTC } from "~/utils";
 
 function PlayerTable({
   data,
@@ -124,13 +131,15 @@ function PlayerTable({
   setFilter,
   setPage
 }: PlayerProps): JSX.Element {
-  let today = new Date();
-  let sevenDaysAgo = new Date(today);
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  const [value,setValue] = useState<any>({
-    startDate: sevenDaysAgo,
-    endDate: new Date(),
-  });
+  const defaultDate = {
+    startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
+    endDate: format(today, "yyyy-MM-dd"),
+  };
+  const [dateValue, setValue] = useState<DateType>(defaultDate);
+
 
 
   const [selectedOption,setSelectedOption] = useState("001");
@@ -141,6 +150,36 @@ function PlayerTable({
     setValue(newValue);
   }
 
+  const [, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const updatedSearchParams = new URLSearchParams(prev);
+        if (dateValue?.startDate) {
+          // start date
+          updatedSearchParams.set(
+            "startAt",
+            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
+          );
+        } else {
+          updatedSearchParams.delete("startAt");
+        }
+        if (dateValue?.endDate) {
+          // end date
+          updatedSearchParams.set(
+            "endAt",
+            convertUTC({ dateValue: dateValue.endDate }),
+          );
+        } else {
+          updatedSearchParams.delete("endAt");
+        }
+
+        return updatedSearchParams;
+      },
+      { preventScrollReset: true },
+    );
+  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
   const table = useReactTable({
     data: data.data,
@@ -159,8 +198,8 @@ function PlayerTable({
         <div className="flex flex-row gap-x-3">
           <Datepicker
             primaryColor={"blue"}
-            value={value}
-            onChange={handleValueChange}
+            value={dateValue!}
+            onChange={(value) => handleValueChange(value as DateType) }
           />
           <DropdownSelect
             selected={selectedOption}
