@@ -60,43 +60,47 @@ export default function  PlayerIndexPage(): JSX.Element {
     totalRow: 0,
   });
 
-  // const today = new Date();
-  // const sevenDaysAgo = new Date(today);
-  // sevenDaysAgo.setDate(today.getDate() - 7);
-  // const defaultDate = {
-  //   startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
-  //   endDate: format(today, "yyyy-MM-dd"),
-  // };
-  // const [dateValue, setDateValue] = useState<DateType>(defaultDate);
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  const defaultDate = {
+    startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
+    endDate: format(today, "yyyy-MM-dd"),
+  };
+  const [dateValue, setDateValue] = useState<DateType>(defaultDate);
+  
+  const handleDateChange = (newDateValue: DateType) => {
+    setDateValue(newDateValue);
+  };
 
-  // useEffect(() => {
-  //   setSearchParams(
-  //     (prev) => {
-  //       const updatedSearchParams = new URLSearchParams(prev);
-  //       if (dateValue?.startDate) {
-  //         // start date
-  //         updatedSearchParams.set(
-  //           "startAt",
-  //           convertUTC({ dateValue: dateValue.startDate, isStart: true }),
-  //         );
-  //       } else {
-  //         updatedSearchParams.delete("startAt");
-  //       }
-  //       if (dateValue?.endDate) {
-  //         // end date
-  //         updatedSearchParams.set(
-  //           "endAt",
-  //           convertUTC({ dateValue: dateValue.endDate }),
-  //         );
-  //       } else {
-  //         updatedSearchParams.delete("endAt");
-  //       }
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const updatedSearchParams = new URLSearchParams(prev);
+        if (dateValue?.startDate) {
+          // start date
+          updatedSearchParams.set(
+            "startAt",
+            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
+          );
+        } else {
+          updatedSearchParams.delete("startAt");
+        }
+        if (dateValue?.endDate) {
+          // end date
+          updatedSearchParams.set(
+            "endAt",
+            convertUTC({ dateValue: dateValue.endDate }),
+          );
+        } else {
+          updatedSearchParams.delete("endAt");
+        }
 
-  //       return updatedSearchParams;
-  //     },
-  //     { preventScrollReset: true },
-  //   );
-  // }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
+        return updatedSearchParams;
+      },
+      { preventScrollReset: true },
+    );
+  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
   useEffect(() => {
     setSearchParams(
@@ -140,8 +144,6 @@ export default function  PlayerIndexPage(): JSX.Element {
     }
   }, [players]);
 
-
-
   return (
     <Layout
       title="ผู้เล่น"
@@ -154,6 +156,7 @@ export default function  PlayerIndexPage(): JSX.Element {
         filter={filterQuery}
         setFilter={setFilterQuery}
         setPage={setPage}
+        onDateChange={handleDateChange}
       />
     </Layout>
   );

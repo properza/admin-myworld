@@ -30,11 +30,17 @@ import {
 import DetailButton from "./DetailButton";
 import DropdownSelect from "./DropdownSelect";
 
+interface DateType {
+  startDate: Date | string;
+  endDate: Date | string;
+}
+
 interface PlayerProps {
   data: PlayersData;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  onDateChange: (newDateValue: DateType) => void;
 }
 
 export type PlayersData = Prettify<
@@ -117,69 +123,30 @@ const columns = [
   }),
 ];
 
-interface DateType {
-  startDate: Date | string;
-  endDate: Date | string;
-}
-
-import { parseISO, format, addHours, subHours } from "date-fns";
-import { convertUTC } from "~/utils";
 
 function PlayerTable({
   data,
   filter,
   setFilter,
-  setPage
+  setPage ,
+  onDateChange,
 }: PlayerProps): JSX.Element {
-  const today = new Date();
-  const sevenDaysAgo = new Date(today);
+  let today = new Date();
+  let sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  const defaultDate = {
-    startDate: format(sevenDaysAgo, "yyyy-MM-dd"),
-    endDate: format(today, "yyyy-MM-dd"),
-  };
-  const [dateValue, setValue] = useState<DateType>(defaultDate);
-
+  const [value,setValue] = useState<any>({
+    startDate: sevenDaysAgo,
+    endDate: new Date(),
+  });
 
 
   const [selectedOption,setSelectedOption] = useState("001");
 
 
-  function handleValueChange(newValue: any) {
-    console.log("handleValueChange",newValue);
+  function handleValueChange(newValue: DateType) {
     setValue(newValue);
+    onDateChange(newValue); // Update the date in PlayerIndexPage
   }
-
-  const [, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSearchParams(
-      (prev) => {
-        const updatedSearchParams = new URLSearchParams(prev);
-        if (dateValue?.startDate) {
-          // start date
-          updatedSearchParams.set(
-            "startAt",
-            convertUTC({ dateValue: dateValue.startDate, isStart: true }),
-          );
-        } else {
-          updatedSearchParams.delete("startAt");
-        }
-        if (dateValue?.endDate) {
-          // end date
-          updatedSearchParams.set(
-            "endAt",
-            convertUTC({ dateValue: dateValue.endDate }),
-          );
-        } else {
-          updatedSearchParams.delete("endAt");
-        }
-
-        return updatedSearchParams;
-      },
-      { preventScrollReset: true },
-    );
-  }, [dateValue.endDate, dateValue.startDate, setSearchParams]);
 
   const table = useReactTable({
     data: data.data,
@@ -196,10 +163,10 @@ function PlayerTable({
       <div className="flex justify-between items-end mb-4">
         <p>ผู้เล่นเกมส์ทั้งหมด ({data.totalRow})</p>
         <div className="flex flex-row gap-x-3">
-          <Datepicker
+        <Datepicker
             primaryColor={"blue"}
-            value={dateValue!}
-            onChange={(value) => handleValueChange(value as DateType) }
+            value={value}
+            onChange={handleValueChange} // Use the handler here
           />
           <DropdownSelect
             selected={selectedOption}
