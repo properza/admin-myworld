@@ -12,6 +12,7 @@ const config = {
   environment: process.env.NODE_ENV,
   api: {
     baseUrl: process.env.API_URL || "API_URL",
+    baseUrlDev: process.env.API_DEV_URL || "API_DEV_URL",
   },
   sessionSecret: process.env.SESSION_SECRET || "SESSION_SECRET",
   cookieMaxAge: process.env.COOKIE_MAX_AGE

@@ -11,7 +11,7 @@ const UsernameSection = ({
   const [imgSrc, setImgSrc] = useState(imageUrl || "/images/avatar.svg");
 
   const handleError = () => {
-    setImgSrc("/images/avatar.svg"); // replace with your local icon path
+    setImgSrc("/images/avatar.svg"); // fallback to a valid path like /images/avatar.svg
   };
 
   return (

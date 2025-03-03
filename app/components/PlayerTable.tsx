@@ -61,7 +61,9 @@ const options = [
     value: "005",
   },
 ];
+
 const columnHelper = createColumnHelper<PlayersData["data"][number]>();
+
 const columns = [
   columnHelper.accessor("itemNo",{
     header: () => "No.",
@@ -129,15 +131,12 @@ function PlayerTable({
     endDate: new Date(),
   });
 
-
   const [selectedOption,setSelectedOption] = useState("001");
-
 
   function handleValueChange(newValue: any) {
     console.log("handleValueChange",newValue);
     setValue(newValue);
   }
-
 
   const table = useReactTable({
     data: data.data,
@@ -145,7 +144,6 @@ function PlayerTable({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
-
 
   return (
 

@@ -81,6 +81,7 @@ function CustomerTable({
   setFilter,
   setPage
 }: CustomerTableProps): JSX.Element {
+  
   const table = useReactTable({
     data: data.data,
     columns,
