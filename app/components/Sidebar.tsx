@@ -55,10 +55,10 @@ const eventNavigation: Navigation[] = [
     href: "/checkinusers",
   },
   {
-    name: "Set Box",
+    name: "setboxe",
     text: "การแลก Set Box",
     icon: "/images/ph_storefront-light.svg",
-    href: "/SetBoxsettings",
+    href: "/setboxes",
   },
   {
     name: "Top 100",

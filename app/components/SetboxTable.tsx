@@ -11,49 +11,38 @@ import {
 import EmptyState from "./EmptyState";
 import { convertUTC } from "~/utils";
 import PaginationNavigator from "./PaginationNavigator";
-import { useLoaderData, useLocation } from "@remix-run/react";
 import Datepicker from "react-tailwindcss-datepicker";
 import { Prettify } from "~/utils.type";
-import { CustomersDataWithItemNo, CustomersResponse } from "~/models/customerEvent.server";
-import DropdownSelect from "./DropdownSelect";
 import Search from "./Search";
 import { classNames } from "~/tailwind";
 import UsernameSection from "./UserNameSection";
 import { parseISO, format, subHours } from "date-fns";
-
-import axios from "axios";
-import { getUserData, requireUserId } from "~/services/session.server";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import CheckinUpdateStatus from './CheckinUpdateStatus.jsx';
-
+import { SetboxesDataWithItemNo, SetboxesResponse } from "~/models/setbox.server";
+import SetboxesUpdateStatus from "./SetboxesUpdateStatus";
+import DetailButton from "./DetailButton";
 
 const timeZoneOffset = 7;
 
-interface CustomerCheckinTableProps {
-    data: CustomersResponse;
+interface SetboxTableProps {
+    data: SetboxesResponse;
     filter: string;
     setFilter: React.Dispatch<React.SetStateAction<string>>;
     accessToken: string;
 }
 
-const columnHelper = createColumnHelper<CustomersDataWithItemNo>(); // Use correct type
-
-export type CustomersProps = Prettify<
-    Omit<CustomersResponse, "data"> & { data: CustomersDataWithItemNo[] }
->;
+const columnHelper = createColumnHelper<SetboxesDataWithItemNo>();
 
 interface DateType {
     startDate: Date | string;
     endDate: Date | string;
 }
 
-function CustomerCheckinTable({
+function SetboxTable({
     data,
     filter,
     setFilter,
     accessToken
-}: CustomerCheckinTableProps): JSX.Element {
-
+}: SetboxTableProps): JSX.Element {
     const [searchParams] = useSearchParams();
     const today = new Date();
     const sevenDaysAgo = new Date(today);
@@ -108,21 +97,21 @@ function CustomerCheckinTable({
                 header: () => "No.",
                 cell: (info) => info.getValue(),
             }),
+            columnHelper.accessor("redeem_code", {
+                header: () => "หมายเลขการแลกซื้อ",
+                cell: (info) => info.getValue() ?? "-",
+            }),
+            columnHelper.accessor("coupon_name", {
+                header: () => "ชื่อ Box Set",
+                cell: (info) => info.getValue() ?? "-",
+            }),
             columnHelper.accessor("restaurant_name", {
                 header: () => "ชื่อร้าน",
                 cell: (info) => info.getValue() ?? "-",
             }),
-            columnHelper.accessor("branch_name", {
-                header: () => "พิกัส / โซน",
+            columnHelper.accessor("restaurant_branch_name", {
+                header: () => "พิกัด / โซน",
                 cell: (info) => info.getValue() ?? "-",
-            }),
-            columnHelper.accessor("created_at", {
-                header: () => "วัน-เวลา Check-in",
-                cell: (info) => {
-                    const date = parseISO(info.getValue());
-                    const zonedDate = subHours(date, timeZoneOffset);
-                    return format(zonedDate, 'dd MMMM yyyy เวลา HH:mm');
-                },
             }),
             columnHelper.accessor((row) => ({ name: row.customer_name, image: row.customer_picture }), {
                 header: "ชื่อผู้ใช้",
@@ -134,23 +123,23 @@ function CustomerCheckinTable({
                 ),
                 size: 44,
             }),
-            columnHelper.accessor("image_url", {
-                header: () => "รายละเอียด",
+            columnHelper.accessor("point", {
+                header: () => "จำนวนคอยน์ที่ใช้แลกซื้อ",
+                cell: (info) => info.getValue() ?? "-",
+            }),
+            columnHelper.accessor("created_at", {
+                header: () => "วัน-เวลา Check-in",
                 cell: (info) => {
-                    const imgSrc = info.getValue() ?? "-"; //info.getValue() ??
-                    return imgSrc !== "-" ? (
-                        <img src={imgSrc} alt="Customer" width={50} height={50} />
-                    ) : (
-                        <span>-</span>
-                    );
-
+                    const date = parseISO(info.getValue());
+                    const zonedDate = subHours(date, timeZoneOffset);
+                    return format(zonedDate, 'dd MMMM yyyy เวลา HH:mm');
                 },
             }),
-            columnHelper.accessor("status", {
+            columnHelper.accessor("approve_status", {
                 header: () => "ตรวจสอบ",
                 cell: (info) => {
                     return (
-                        <CheckinUpdateStatus
+                        <SetboxesUpdateStatus
                             id={info.row.original.id}
                             approve_status={info.getValue()}
                             accessToken={accessToken}
@@ -158,14 +147,15 @@ function CustomerCheckinTable({
                     )
                 },
             }),
+            // columnHelper.accessor("id", {
+            //     id: "id",
+            //     header: () => "รายละเอียด",
+            //     cell: (info) => <DetailButton to={`/setboxes/${info.getValue()}`} />,
+            //     size: 44,
+            // }),
         ],
         [data],
     )
-    // Map the `data.data` to include `itemNo`
-    const mappedData: CustomersDataWithItemNo[] = data.data.map((customer, index) => ({
-        ...customer,
-        itemNo: (data.currentPage - 1) * data.perPage + index + 1, // Calculate `itemNo`
-    }));
 
     const table = useReactTable({
         data: data.data,
@@ -184,14 +174,14 @@ function CustomerCheckinTable({
                         value={dateValue!}
                         onChange={(value) => handleValueChange(value as DateType)}
                     />
-                    <Search filter={filter} setFilter={setFilter} />
+                    <Search setPlaceholder={'ค้นหาชื่อร้าน'} filter={filter} setFilter={setFilter} />
                 </div>
             </div>
             {/* Your table rendering */}
             <div
                 className={classNames(
-                data.totalRow > 0 ? "overflow-y-auto" : "",
-                "md:h-[12.25rem] lg:max-h-[40rem] flex-grow border-gray-400 bg-white",
+                    data.totalRow > 0 ? "overflow-y-auto" : "",
+                    "md:h-[12.25rem] lg:max-h-[40rem] flex-grow border-gray-400 bg-white",
                 )}
             >
                 <table className="w-full">
@@ -230,9 +220,9 @@ function CustomerCheckinTable({
                     </tbody>
                 </table>
                 {data.totalRow === 0 ? (
-                <div className="flex h-full justify-center items-center ">
-                    <EmptyState />
-                </div>
+                    <div className="flex h-full justify-center items-center ">
+                        <EmptyState />
+                    </div>
                 ) : null}
             </div>
 
@@ -250,7 +240,7 @@ function CustomerCheckinTable({
                 />
             </div>
         </div>
-    );
+    )
 }
 
-export default CustomerCheckinTable;
+export default SetboxTable

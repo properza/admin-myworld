@@ -3,7 +3,7 @@ import config from "~/config";
 import { getUserData, requireUserId } from "~/services/session.server";
 import { constructURL } from "~/utils";
 
-interface CheckinUpdateStatusProps {
+interface SetboxesUpdateStatusProps {
   id: string;
   approve_status: string;
   accessToken: string;
@@ -27,7 +27,7 @@ const options = [
   },
 ];
 
-const CheckinUpdateStatus: React.FC<CheckinUpdateStatusProps> = ({
+const SetboxesUpdateStatus: React.FC<SetboxesUpdateStatusProps> = ({
   id,
   approve_status,
   accessToken,
@@ -41,14 +41,14 @@ const CheckinUpdateStatus: React.FC<CheckinUpdateStatusProps> = ({
     console.log("Selected status:", newStatus); // Log the selected status
 
     const requestBody = JSON.stringify({
-      status: newStatus,
+        approve_status: newStatus,
     });
 
     try {
       const response = await fetch(
         constructURL(
-          "https://games.myworld-store.com/api",
-          `/mymap/approveCheckInAdmin/${id}`,
+          `https://games.myworld-store.com/api`,
+          `/mymap/approveRedeemCouponAdmin/${id}`,
         ),
         {
           method: "PUT",
@@ -61,7 +61,7 @@ const CheckinUpdateStatus: React.FC<CheckinUpdateStatusProps> = ({
       );
 
       if (response.ok) {
-        window.location.href = "/Checkinusers";
+        window.location.href = "/setboxes";
       } else {
         throw new Error("Error has occurred");
       }
@@ -81,7 +81,7 @@ const CheckinUpdateStatus: React.FC<CheckinUpdateStatusProps> = ({
           name="approve_status"
           value={selectedStatus} // This controls which option is selected
           onChange={handleChange}
-          className="border-2 w-[120px] rounded p-1 text-xs"
+          className="border-2 rounded p-1 text-xs"
           style={{
             borderColor: statusColor
           }}
@@ -94,7 +94,7 @@ const CheckinUpdateStatus: React.FC<CheckinUpdateStatusProps> = ({
         </select>
       ) : (
         <p
-          className={`text-xs border-2 rounded p-2 w-[120px]`}
+          className={`text-xs border-2 rounded w-full p-2`}
           style={{
             borderColor: statusColor,
             color: statusColor
@@ -107,4 +107,4 @@ const CheckinUpdateStatus: React.FC<CheckinUpdateStatusProps> = ({
   );
 };
 
-export default CheckinUpdateStatus;
+export default SetboxesUpdateStatus;

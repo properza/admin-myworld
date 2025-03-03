@@ -8,13 +8,10 @@ import { format } from "date-fns";
 import { convertUTC } from "~/utils";
 import CustomerCheckinTable from "~/components/CustomerCheckinTable";
 
-
-
 import {
     CheckInHistoryList
     , CustomersDataWithItemNo
     , CustomerEventMetadata
-    , CustomersData
 } from "~/models/customerEvent.server";
 
 interface DateType {
@@ -43,7 +40,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return json({ customersE, accessToken });
 };
 
-export const meta: MetaFunction = () => [{ title: "My Beer | Check-in" }];
+export const meta: MetaFunction = () => [{ title: "My Beer | Check in" }];
 
 
 export default function CheckinusersIndexPage(): JSX.Element {
@@ -71,23 +68,6 @@ export default function CheckinusersIndexPage(): JSX.Element {
     };
 
     const [dateValue, setDateValue] = useState<DateType>(defaultDate);
-
-    // useEffect(() => {
-    //     setSearchParams((prev) => {
-    //         const updatedSearchParams = new URLSearchParams(prev);
-    //         if (dateValue.startDate) {
-    //             updatedSearchParams.set("startAt", convertUTC({ dateValue: dateValue.startDate, isStart: true }));
-    //         } else {
-    //             updatedSearchParams.delete("startAt");
-    //         }
-    //         if (dateValue.endDate) {
-    //             updatedSearchParams.set("endAt", convertUTC({ dateValue: dateValue.endDate }));
-    //         } else {
-    //             updatedSearchParams.delete("endAt");
-    //         }
-    //         return updatedSearchParams;
-    //     });
-    // }, [dateValue, setSearchParams]);
 
     useMemo(() => {
         if (customersE && customersE.data) {
@@ -129,9 +109,11 @@ export default function CheckinusersIndexPage(): JSX.Element {
         );
     }, [page, filterQuery]);
 
+    console.log(location.pathname)
+
     return (
         <Layout
-            title="ข้อมูลการ Check-in"
+            title="ข้อมูลการ Check in"
             pathname={location.pathname}
             isSubRoute={false}
             returnRoute=""

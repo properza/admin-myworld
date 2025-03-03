@@ -6,17 +6,19 @@ interface SearchProps {
   className?: string;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  setPlaceholder?:string;
 }
 
 export default function Search({
   className,
   filter,
   setFilter,
+  setPlaceholder = "Search" 
 }: SearchProps): JSX.Element {
   return (
     <div
       className={cn(
-        "w-36 h-10 px-2 py-1 bg-white rounded-lg border border-sky-400 justify-between items-center gap-1 inline-flex",
+        "w-[20] h-10 px-2 py-1 bg-white rounded-lg border border-sky-400 justify-between items-center gap-1 inline-flex",
         className,
       )}
     >
@@ -32,8 +34,8 @@ export default function Search({
       <DebouncedInput
         value={filter ?? ""}
         onChange={(value) => setFilter(String(value))}
-        className="w-[6.25rem] focus:ring-transparent text-sky-400 text-base font-normal font-inter leading-normal"
-        placeholder="Search"
+        className="w-[8rem] focus:ring-transparent text-sky-400 text-base font-normal font-inter leading-normal"
+        placeholder={setPlaceholder}
       />
     </div>
   );
