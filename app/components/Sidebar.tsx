@@ -67,7 +67,7 @@ const eventNavigation: Navigation[] = [
     name: "Checkinuser",
     text: "ข้อมูลการ Check-in",
     icon: "/images/map-pin.svg",
-    href: "/Checkinusers",
+    href: "/checkinusers",
   },
   {
     name: "Set Box",
