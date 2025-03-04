@@ -61,10 +61,10 @@ const eventNavigation: Navigation[] = [
     href: "/setboxes",
   },
   {
-    name: "Top 100",
+    name: "leaderboards",
     text: "Top 100",
     icon: "/images/users.svg",
-    href: "/Top-100",
+    href: "/leaderboards",
   },
 ];
 

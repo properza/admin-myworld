@@ -19,46 +19,6 @@ import { constructURL } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "My Beer | Trade" }];
 
-// const mockCustomer: Customer = {
-//   customer_id: "123",
-//   name: "John Doe",
-//   phone: "555-1234",
-//   email: "john.doe@example.com",
-//   picture: "https://picsum.photos/200/300",
-//   point: 1000,
-//   game_point: 500,
-//   order: [],
-//   trade: [],
-//   created_at: "2024-01-25T12:00:00Z",
-//   updated_at: "2024-01-25T14:30:00Z",
-// };
-
-// const mockTradeInfo = {
-//   tradeId: "TRADE123",
-//   tradedAt: "12/04/2023 - 13:29",
-// };
-
-// const mockTradeList = [
-//   {
-//     itemNo: 1,
-//     merchandiseName: "Product A",
-//     merchandiseImageUrl: "https://picsum.photos/200/300",
-//     amount: 10,
-//     tradeStatus: "pending",
-//     shipmentStatus: "pending",
-//     totalPointUsed: "50.90"
-//   },
-//   {
-//     itemNo: 2,
-//     merchandiseName: "Product A",
-//     merchandiseImageUrl: "https://picsum.photos/200/300",
-//     amount: 10,
-//     tradeStatus: "pending",
-//     shipmentStatus: "pending",
-//     totalPointUsed: "30.90"
-//   }
-// ]
-
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   await requireUserId(request);
   const { accessToken } = await getUserData(request);

@@ -143,8 +143,8 @@ function CustomerCheckinTable({
                         <img
                             src={imgSrc}
                             alt="Customer"
-                            width={50}
-                            height={50}
+                            width={24}
+                            height={24}
                             className="cursor-pointer"
                             onClick={() => {
                                 setSelectedImage(imgSrc); // Set the selected image source

@@ -8,6 +8,7 @@ import {
     useSearchParams,
     useSubmit,
 } from "@remix-run/react";
+import DetailButton from "./DetailButton";
 import EmptyState from "./EmptyState";
 import { convertUTC } from "~/utils";
 import PaginationNavigator from "./PaginationNavigator";
@@ -19,7 +20,6 @@ import UsernameSection from "./UserNameSection";
 import { parseISO, format, subHours } from "date-fns";
 import { SetboxesDataWithItemNo, SetboxesResponse } from "~/models/setbox.server";
 import SetboxesUpdateStatus from "./SetboxesUpdateStatus";
-import DetailButton from "./DetailButton";
 
 const timeZoneOffset = 7;
 
@@ -150,9 +150,9 @@ function SetboxTable({
             // columnHelper.accessor("id", {
             //     id: "id",
             //     header: () => "รายละเอียด",
-            //     cell: (info) => <DetailButton to={`/setboxes/${info.getValue()}`} />,
-            //     size: 44,
-            // }),
+            //     cell: (info) => <DetailButton to={`/setboxs/${info.getValue()}`} />,
+            //     size: 136,
+            //   }),
         ],
         [data],
     )

@@ -78,25 +78,38 @@ export async function SetboxesHistoryList(
     return Setboxes as SetboxesResponse;
 }
 
+export interface GetSetboxesResponse {
+    id: string;
+    redeem_code: string;
+    approve_status: string;
+    expired_date: string;
+    is_used: string;
+    point: number;
+    created_at: string;
+    customer_name: string;
+    customer_picture: string;
+    coupon_name: string;
+    restaurant_name: string;
+    restaurant_branch_name: string;
+}
+
 export async function getCustomerReedeem(
     accessToken: string,
-    userId: string,
-  ): Promise<SetboxesData> {
+    userId: string
+): Promise<GetSetboxesResponse> {
     const endpointURL = constructURL(
-      config.api.baseUrl,
-      `/mymap/allRedeemCouponHistoryAdmin/${userId}`,
+        config.api.baseUrl,
+        `/mymap/allRedeemCouponHistoryAdmin/${userId}`
     );
-  
+
     const response = await fetch(endpointURL.toString(), {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
     });
-  
+
     const Setboxes = await response.json();
-  
-    return Setboxes as SetboxesData;
-  }
-  
+    return Setboxes as GetSetboxesResponse;
+}
+
