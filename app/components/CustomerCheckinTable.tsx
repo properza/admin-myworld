@@ -53,7 +53,8 @@ function CustomerCheckinTable({
     setFilter,
     accessToken
 }: CustomerCheckinTableProps): JSX.Element {
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [searchParams] = useSearchParams();
     const today = new Date();
     const sevenDaysAgo = new Date(today);
@@ -137,13 +138,22 @@ function CustomerCheckinTable({
             columnHelper.accessor("image_url", {
                 header: () => "รายละเอียด",
                 cell: (info) => {
-                    const imgSrc = info.getValue() ?? "-"; //info.getValue() ??
+                    const imgSrc = info.getValue() ?? "-";
                     return imgSrc !== "-" ? (
-                        <img src={imgSrc} alt="Customer" width={50} height={50} />
+                        <img
+                            src={imgSrc}
+                            alt="Customer"
+                            width={50}
+                            height={50}
+                            className="cursor-pointer"
+                            onClick={() => {
+                                setSelectedImage(imgSrc); // Set the selected image source
+                                setIsModalOpen(true); // Open the modal
+                            }}
+                        />
                     ) : (
                         <span>-</span>
                     );
-
                 },
             }),
             columnHelper.accessor("status", {
@@ -190,8 +200,8 @@ function CustomerCheckinTable({
             {/* Your table rendering */}
             <div
                 className={classNames(
-                data.totalRow > 0 ? "overflow-y-auto" : "",
-                "md:h-[12.25rem] lg:max-h-[40rem] flex-grow border-gray-400 bg-white",
+                    data.totalRow > 0 ? "overflow-y-auto" : "",
+                    "md:h-[12.25rem] lg:max-h-[40rem] flex-grow border-gray-400 bg-white",
                 )}
             >
                 <table className="w-full">
@@ -230,9 +240,9 @@ function CustomerCheckinTable({
                     </tbody>
                 </table>
                 {data.totalRow === 0 ? (
-                <div className="flex h-full justify-center items-center ">
-                    <EmptyState />
-                </div>
+                    <div className="flex h-full justify-center items-center ">
+                        <EmptyState />
+                    </div>
                 ) : null}
             </div>
 
@@ -249,6 +259,13 @@ function CustomerCheckinTable({
                     setPageIndex={table.setPageIndex}
                 />
             </div>
+            {isModalOpen && selectedImage && (
+                <div onClick={() => setIsModalOpen(false)} className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+                    <div className="relative bg-white p-4 rounded-lg">
+                        <img src={selectedImage} alt="Expanded View" className="max-w-full max-h-screen object-contain" />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
