@@ -46,7 +46,7 @@ export default function Leaderboards() {
             header: "จำนวนร้าน Check-in",
             cell: (info) => info.getValue(),
         }),
-        columnHelper.accessor("diff_seconds", {
+        columnHelper.accessor("point", {
             header: "จำนวนคอยน์",
             cell: (info) => info.getValue(),
         }),

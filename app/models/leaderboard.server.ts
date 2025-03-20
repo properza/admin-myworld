@@ -10,6 +10,7 @@ export interface Leaderboard {
     name: string;
     picture: string;
   };
+  point:number;
 }
 
 export async function getLeaderboardData(): Promise<Leaderboard[]> {
