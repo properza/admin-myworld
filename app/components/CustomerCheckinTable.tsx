@@ -10,6 +10,7 @@ import {
 } from "@remix-run/react";
 import EmptyState from "./EmptyState";
 import { convertUTC } from "~/utils";
+import PaginationCustom from "./PaginationCustom";
 import PaginationNavigator from "./PaginationNavigator";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import Datepicker from "react-tailwindcss-datepicker";
@@ -33,6 +34,7 @@ interface CustomerCheckinTableProps {
     data: CustomersResponse;
     filter: string;
     setFilter: React.Dispatch<React.SetStateAction<string>>;
+    setPage: React.Dispatch<React.SetStateAction<number>>;
     accessToken: string;
 }
 
@@ -51,6 +53,7 @@ function CustomerCheckinTable({
     data,
     filter,
     setFilter,
+    setPage ,
     accessToken
 }: CustomerCheckinTableProps): JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -182,6 +185,7 @@ function CustomerCheckinTable({
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        initialState: { pagination: { pageSize: 50 } },
     });
 
     return (
@@ -253,10 +257,16 @@ function CustomerCheckinTable({
                     <strong>{table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</strong>
                 </span>
 
-                <PaginationNavigator
+                {/* <PaginationNavigator
                     currentPage={table.getState().pagination.pageIndex + 1}
                     totalPage={table.getPageCount()}
                     setPageIndex={table.setPageIndex}
+                /> */}
+                <PaginationCustom
+                    currentPage={data.currentPage}
+                    totalPage={data.totalPage}
+                    setPageIndex={table.setPageIndex}
+                    setPage={setPage}
                 />
             </div>
             {isModalOpen && selectedImage && (

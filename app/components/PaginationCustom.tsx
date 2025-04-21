@@ -59,13 +59,13 @@ function PaginationCustom({
 
   return (
     <div className="h-10 justify-start items-start gap-1 inline-flex">
-      <button
+      {/* <button
         className="w-auto h-10 p-2.5 bg-gray-200 rounded-sm flex-col justify-center items-center gap-2.5 inline-flex"
         onClick={handlePreviousPage}
         disabled={selectedPage === 1}
       >
         <div className="text-sm font-normal font-inter text-nowrap">Previous</div>
-      </button>
+      </button> */}
       {pages.map((page, index) => (
         <button
           key={index}
@@ -87,13 +87,13 @@ function PaginationCustom({
           </div>
         </button>
       ))}
-      <button
+      {/* <button
         className="w-10 h-10 p-2.5 bg-gray-200 rounded-sm flex-col justify-center items-center gap-2.5 inline-flex"
         onClick={handleNextPage}
         disabled={selectedPage === totalPage}
       >
         <div className="text-sm font-normal font-inter">Next</div>
-      </button>
+      </button> */}
     </div>
   );
 }

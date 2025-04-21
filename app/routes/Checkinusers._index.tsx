@@ -54,7 +54,7 @@ export default function CheckinusersIndexPage(): JSX.Element {
 
     const [CustomersMetadata, setCustomersMetadata] = useState<CustomerEventMetadata>({
         currentPage: 1,
-        perPage: 0,
+        perPage: 50,
         totalPage: 1,
         totalRow: 0,
     });
@@ -122,6 +122,7 @@ export default function CheckinusersIndexPage(): JSX.Element {
                 data={{ ...CustomersMetadata, data: customersEData }}
                 accessToken={accessToken}
                 filter={filterQuery}
+                setPage={setPage}
                 setFilter={setFilterQuery}
             />
         </Layout>
