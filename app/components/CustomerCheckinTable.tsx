@@ -81,24 +81,23 @@ function CustomerCheckinTable({
         setSearchParams(
             (prev) => {
                 const updatedSearchParams = new URLSearchParams(prev);
-                if (dateValue?.startDate) {
-                    // start date
-                    updatedSearchParams.set(
-                        "startAt",
-                        convertUTC({ dateValue: dateValue.startDate, isStart: true }),
-                    );
-                } else {
-                    updatedSearchParams.delete("startAt");
-                }
-                if (dateValue?.endDate) {
-                    // end date
-                    updatedSearchParams.set(
-                        "endAt",
-                        convertUTC({ dateValue: dateValue.endDate }),
-                    );
-                } else {
-                    updatedSearchParams.delete("endAt");
-                }
+                       if (dateValue?.startDate) {
+                               // ส่งเฉพาะปี-เดือน-วัน ไม่รวมเวลา
+                               const start = typeof dateValue.startDate === "string"
+                                 ? dateValue.startDate
+                                 : format(new Date(dateValue.startDate), "yyyy-MM-dd");
+                               updatedSearchParams.set("startAt", start);
+                           } else {
+                               updatedSearchParams.delete("startAt");
+                           }
+                           if (dateValue?.endDate) {
+                               const end = typeof dateValue.endDate === "string"
+                                 ? dateValue.endDate
+                                 : format(new Date(dateValue.endDate), "yyyy-MM-dd");
+                               updatedSearchParams.set("endAt", end);
+                           } else {
+                               updatedSearchParams.delete("endAt");
+                           }
 
                 return updatedSearchParams;
             },
