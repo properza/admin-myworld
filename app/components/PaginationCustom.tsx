@@ -29,9 +29,9 @@ function PaginationCustom({
     if (totalPage <= pageRange) {
       setPages(generatePages(1, totalPage));
     } else if (currentPage <= 3) {
-      setPages([...generatePages(1, 3), ellipsis, totalPage]);
+      setPages([...generatePages(1, 5), ellipsis, totalPage]);
     } else if (currentPage >= totalPage - 2) {
-      setPages([1, ellipsis, ...generatePages(totalPage - 2, totalPage)]);
+      setPages([1, ellipsis, ...generatePages(totalPage - 4, totalPage)]);
     } else {
       setPages([1, ellipsis, ...generatePages(currentPage - 1, currentPage + 1), ellipsis, totalPage]);
     }
